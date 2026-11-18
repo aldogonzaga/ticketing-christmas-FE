@@ -41,10 +41,10 @@ import { PublicLayout } from "./public-layout";
 import { SectionLabel, ArrowLink, Brand, Badge, RsvpBadge, Empty, copyText } from "./shared";
 
 export const schedule = [
-  ["09.00 – 10.00", "Sapaan Pembuka", "Registrasi tamu, penyambutan, dan pembukaan gerbang acara."],
-  ["10.00 – 10.44", "Pujian Prace", "Pembukaan dan persembahan seni budaya Nusantara."],
-  ["10.44 – 11.39", "Doa Pembuka", "Selebrasi karya, potensi, dan pencapaian generasi muda."],
-  ["11.39 – 12.00", "Pujian Worship", "Penandatanganan MOU, ramah tamah, dan penutupan."],
+  ["09.00 – 10.00", "Sapaan & Registrasi", "Penyambutan tamu undangan, pembagian booklet acara, dan foto bersama."],
+  ["10.00 – 10.45", "Pujian Natal (Praise)", "Lagu-lagu pujian Natal penuh sukacita dan pembukaan ibadah."],
+  ["10.45 – 11.30", "Renungan & Doa Natal", "Pesan Natal pembawa damai, penyalaan lilin, dan doa berkat."],
+  ["11.30 – 12.30", "Perayaan & Ramah Tamah", "Persembahan spesial, pembagian bingkisan kasih, dan santap siang bersama."],
 ];
 
 // URL Google Calendar dengan Waktu Acara
@@ -280,28 +280,28 @@ export function HomePage() {
           <div className="page-width">
             <div className="home-story-layout">
               <div className="home-story-heading" data-reveal>
-                <SectionLabel>LEBIH DARI SEBUAH PERAYAAN</SectionLabel>
+                <SectionLabel>SUKACITA NATAL BERSAMA</SectionLabel>
                 <h2 className="display-heading">
-                  Berakar dalam budaya. Bertumbuh dalam <em>prestasi.</em>
+                  Merajut kasih. Berbagi <em>sukacita & damai.</em>
                 </h2>
               </div>
               <figure className="home-story-photo" data-reveal>
                 <div className="home-photo-topline">
                   <span>CATATAN KEBERSAMAAN</span>
-                  <span>MM · 2027</span>
+                  <span>NATAL · 2026</span>
                 </div>
                 <div className="home-photo-image">
                   <img
                     src={maheswaraGroupPhoto}
                     width={1200}
                     height={900}
-                    alt="Kebersamaan siswa Maheswara Maheswari bersama Metland School"
+                    alt="Kebersamaan Natal bersama keluarga dan sahabat"
                     loading="lazy"
                   />
                   <div className="home-photo-stamp" aria-hidden="true">
-                    <strong>MM</strong>
-                    <span>TOGETHER</span>
-                    <small>2027</small>
+                    <strong>NATAL</strong>
+                    <span>JOY & PEACE</span>
+                    <small>2026</small>
                   </div>
                 </div>
                 <figcaption>
@@ -324,24 +324,24 @@ export function HomePage() {
             </div>
             <div className="values-row">
               <div className="value-item" data-reveal>
-                <Flower2 />
+                <Sparkles />
                 <div>
-                  <h3>Warisan yang Menginspirasi</h3>
-                  <p>Budaya Nusantara sebagai jati diri.</p>
-                </div>
-              </div>
-              <div className="value-item" data-reveal>
-                <GraduationCap />
-                <div>
-                  <h3>Generasi Penuh Potensi</h3>
-                  <p>Merayakan karya dan langkah berprestasi.</p>
+                  <h3>Sukacita & Damai</h3>
+                  <p>Membawa terang dan kehangatan Natal.</p>
                 </div>
               </div>
               <div className="value-item" data-reveal>
                 <Heart />
                 <div>
-                  <h3>Kebersamaan yang Berarti</h3>
-                  <p>Momen hangat, kenangan yang melekat.</p>
+                  <h3>Kasih & Berkat</h3>
+                  <p>Merayakan kebersamaan yang tulus.</p>
+                </div>
+              </div>
+              <div className="value-item" data-reveal>
+                <Ticket />
+                <div>
+                  <h3>Kenangan Indah</h3>
+                  <p>Momen berharga bersama keluarga & sahabat.</p>
                 </div>
               </div>
             </div>
@@ -359,7 +359,7 @@ export function HomePage() {
             backgroundRepeat: 'no-repeat'
           }}
         >
-          <div className="absolute inset-0 bg-black/75 backdrop-blur-[1px]" />
+          <div className="absolute inset-0 bg-gradient-to-r from-red-950/80 via-red-900/70 to-emerald-950/80 backdrop-blur-[1px]" />
 
           <div className="page-width relative z-10">
             <div className="section-top">

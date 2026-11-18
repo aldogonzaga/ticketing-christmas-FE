@@ -1,6 +1,6 @@
 import { Link, useRouterState } from "@tanstack/react-router";
 import { useState, type ReactNode } from "react";
-import { ArrowUpRight, Menu, X, Flower2 } from "lucide-react";
+import { ArrowUpRight, Menu, X, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Brand } from "./shared";
 import { useSambut } from "@/lib/sambut/store";
