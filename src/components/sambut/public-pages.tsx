@@ -49,9 +49,9 @@ export const schedule = [
 
 // URL Google Calendar dengan Waktu Acara
 const googleCalendarUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(
-  "Opening PPDB & SemiFinal Maheswara Maheswari 2027"
-)}&dates=20261024T060000Z/20261024T080000Z&details=${encodeURIComponent(
-  "Merangkai mimpi, merayakan potensi, dan melangkah bersama dalam kehangatan budaya Indonesia."
+  "Christmas Celebration 2026"
+)}&dates=20261225T020000Z/20261225T050000Z&details=${encodeURIComponent(
+  "Merayakan damai, sukacita, dan kehangatan Natal bersama keluarga dan sahabat."
 )}&location=${encodeURIComponent("Milenia Hub - Platinum Cineplex")}`;
 
 function Countdown() {
@@ -184,22 +184,22 @@ export function HomePage() {
             src={templeImage}
             width={1920}
             height={1088}
-            alt="Stupa Borobudur dan pegunungan Jawa saat matahari terbit"
+            alt="Suasana Natal yang hangat dan damai"
             fetchPriority="high"
           />
           <div className="hero-shade" />
           <div className="hero-bottom-shade" />
+          <div className="christmas-snow" aria-hidden="true" />
           <div className="page-width hero-content">
             <div className="hero-edition"></div>
             <h1>
-              Opening PPDB &
+              Christmas Celebration &
               <br />
-              SemiFinal <em>Maheswara Maheswari.</em>
+              Holiday Gala <em>2026.</em>
             </h1>
             <p className="hero-tagline">“{data.settings.tagline}”</p>
             <p className="hero-description">
-              Merangkai mimpi, merayakan potensi, dan melangkah bersama dalam kehangatan budaya
-              Indonesia.
+              Merayakan damai, sukacita, dan kehangatan Natal bersama dalam kebersamaan yang penuh kasih dan berkah.
             </p>
             <div className="hero-buttons">
               {invitation ? (
@@ -315,18 +315,17 @@ export function HomePage() {
                   </div>
                 </div>
                 <figcaption>
-                  <span>Maheswara Maheswari</span>
-                  <small>Tumbuh dan melangkah bersama</small>
+                  <span>Christmas Celebration</span>
+                  <small>Damai & Sukacita Bersama</small>
                 </figcaption>
               </figure>
               <div className="home-story-copy" data-reveal>
                 <p>
-                  Opening PPDB & SemiFinal Maheswara Maheswari 2027 adalah perayaan potensi,
-                  kreativitas, dan langkah baru generasi muda.
+                  Christmas Celebration 2026 adalah momen istimewa untuk merayakan kasih,
+                  pengharapan, dan kebersamaan yang penuh sukacita.
                 </p>
                 <p>
-                  Maheswara Maheswari menjadi ruang untuk bertumbuh dalam karakter dan prestasi,
-                  sekaligus merawat budaya Indonesia bersama.
+                  Mari bersama-sama mempererat tali persaudaraan dalam kehangatan suasana Natal yang kudus dan berkesan.
                 </p>
                 <a href="#rundown-acara" className="arrow-link">
                   Lihat rangkaian acara <ArrowRight size={17} />
@@ -424,7 +423,7 @@ export function HomePage() {
               </span>
               <span>SELAMAT DATANG</span>
               <strong>{data.settings.name}</strong>
-              <small>Maheswara Maheswari · 2027</small>
+              <small>Christmas Celebration · 2026</small>
             </div>
           </div>
         )}
@@ -672,7 +671,7 @@ function MessagesSectionContent() {
     addMessage({
       name: String(f.get("name")).trim(),
       text: String(f.get("text")).trim(),
-      category: "Tamu Maheswara Maheswari 2027",
+      category: "Tamu Undangan Natal 2026",
     });
     e.currentTarget.reset();
     toast.success("Pesan Anda telah ditambahkan");

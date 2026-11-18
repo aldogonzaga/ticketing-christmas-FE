@@ -43,7 +43,7 @@ export function LoginPage() {
       <section className="login-visual">
         <img src={templeImage} width={1920} height={1088} alt="Inspirasi Budaya Nusantara" />
         <div>
-          <SectionLabel>RUANG PANITIA MAHESWARA MAHESWARI 2026</SectionLabel>
+          <SectionLabel>RUANG PANITIA NATAL 2026</SectionLabel>
           <h1>
             Sambut setiap tamu.
             <br />
@@ -450,7 +450,7 @@ export function SettingsPage() {
                 </label>
               ))}
               <label className="field full">
-                <span>Foto kebersamaan Maheswara Maheswari</span>
+                <span>Foto kebersamaan Natal</span>
                 <input
                   type="file"
                   accept="image/*"
@@ -476,7 +476,7 @@ export function SettingsPage() {
                   <div className="group-photo-preview">
                     <img
                       src={draft.groupPhoto}
-                      alt="Pratinjau foto kebersamaan Maheswara Maheswari"
+                      alt="Pratinjau foto kebersamaan Natal"
                     />
                     <Button
                       type="button"
@@ -563,7 +563,7 @@ export function SettingsPage() {
               onClick={() => {
                 reset();
                 setDraft({
-                  name: "Opening PPDB & SemiFinal Maheswara Maheswari 2027",
+                  name: "Christmas Celebration 2026",
                   school: "SMK Metland",
                   date: "",
                   location: "",

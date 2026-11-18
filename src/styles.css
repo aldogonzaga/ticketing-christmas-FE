@@ -26,37 +26,42 @@
   --color-ring: var(--primary);
   --color-success: var(--success);
   --color-info: var(--info);
+  --color-gold: var(--gold);
+  --color-gold-foreground: var(--gold-foreground);
   --radius-sm: 4px;
   --radius-md: 6px;
   --radius-lg: 8px;
   --radius-xl: 12px;
 }
 :root {
-  --background: oklch(0.14 0.012 100);
-  --foreground: oklch(0.94 0.023 85);
-  --card: oklch(0.185 0.01 90);
-  --secondary: oklch(0.22 0.01 90);
-  --primary: oklch(0.78 0.115 86);
-  --primary-foreground: oklch(0.18 0.025 80);
-  --muted-foreground: oklch(0.64 0.016 90);
-  --accent: oklch(0.27 0.025 90);
-  --border: oklch(0.3 0.018 90);
-  --success: oklch(0.72 0.12 159);
-  --destructive: oklch(0.68 0.17 26);
-  --info: oklch(0.74 0.105 240);
-  --paper: oklch(0.925 0.031 90);
-  --paper-ink: oklch(0.26 0.025 90);
-  --paper-muted: oklch(0.51 0.022 90);
-  --paper-border: oklch(0.8 0.035 90);
+  --background: #0a1711;
+  --foreground: #f8faf7;
+  --card: #11261d;
+  --secondary: #17382b;
+  --primary: #c92336;
+  --primary-foreground: #ffffff;
+  --muted-foreground: #a0b8ac;
+  --accent: #1e4535;
+  --border: #244b3a;
+  --success: #27ae60;
+  --destructive: #c92336;
+  --info: #5dade2;
+  --gold: #f4cf5d;
+  --gold-foreground: #201804;
+  --gold-border: #dfb235;
+  --paper: #fbf7ee;
+  --paper-ink: #14241c;
+  --paper-muted: #526d60;
+  --paper-border: #d4e4dc;
   --hero-shade: linear-gradient(
     90deg,
-    oklch(0.1 0.015 100/0.89),
-    oklch(0.1 0.015 100/0.55) 48%,
-    oklch(0.1 0.015 100/0.12)
+    rgba(10, 23, 17, 0.96),
+    rgba(10, 23, 17, 0.78) 48%,
+    rgba(201, 35, 54, 0.18)
   );
   --hero-bottom: linear-gradient(0deg, var(--background), transparent);
-  --overlay: oklch(0.06 0.01 90/0.8);
-  --shadow: 0 24px 70px oklch(0.05 0 0/0.35);
+  --overlay: rgba(8, 18, 13, 0.85);
+  --shadow: 0 24px 70px rgba(0, 0, 0, 0.55);
   --radius: 8px;
 }
 * {
@@ -130,18 +135,20 @@ img {
 .brand-mark {
   height: 39px;
   width: 35px;
-  color: var(--primary);
+  color: var(--gold);
   display: grid;
   place-items: center;
-  border: 1px solid var(--primary);
+  border: 1.5px solid var(--primary);
+  background: radial-gradient(circle, rgba(201, 35, 54, 0.25) 0%, transparent 75%);
   border-radius: 48% 48% 42% 42%;
   position: relative;
+  box-shadow: 0 0 14px rgba(244, 207, 93, 0.25);
 }
 .brand-mark:after {
   content: "";
   position: absolute;
   inset: 4px;
-  border: 1px solid color-mix(in oklch, var(--primary) 40%, transparent);
+  border: 1px solid rgba(244, 207, 93, 0.55);
   border-radius: inherit;
 }
 .brand-mark svg {
@@ -227,7 +234,7 @@ img {
   display: flex;
   align-items: center;
   gap: 11px;
-  color: var(--primary);
+  color: var(--gold);
   font-size: 10px;
   font-weight: 500;
   letter-spacing: 2.5px;
@@ -236,7 +243,7 @@ img {
 .eyebrow > span {
   width: 25px;
   height: 1px;
-  background: var(--primary);
+  background: var(--gold);
 }
 .event-hero {
   min-height: 640px;
@@ -264,6 +271,33 @@ img {
   position: absolute;
   inset: 65% 0 0;
   background: var(--hero-bottom);
+}
+.christmas-snow {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 2;
+  background-image: 
+    radial-gradient(3px 3px at 25px 35px, rgba(255, 255, 255, 0.85), transparent),
+    radial-gradient(5px 5px at 160px 130px, rgba(255, 255, 255, 0.9), transparent),
+    radial-gradient(2.5px 2.5px at 280px 45px, rgba(255, 255, 255, 0.75), transparent),
+    radial-gradient(4.5px 4.5px at 420px 210px, rgba(255, 255, 255, 0.8), transparent),
+    radial-gradient(3px 3px at 580px 95px, rgba(255, 255, 255, 0.85), transparent),
+    radial-gradient(5.5px 5.5px at 730px 175px, rgba(255, 255, 255, 0.7), transparent),
+    radial-gradient(2.5px 2.5px at 870px 65px, rgba(255, 255, 255, 0.9), transparent),
+    radial-gradient(4px 4px at 1020px 235px, rgba(255, 255, 255, 0.75), transparent),
+    radial-gradient(3.5px 3.5px at 1160px 135px, rgba(255, 255, 255, 0.8), transparent);
+  background-size: 600px 600px;
+  animation: christmasSnowFall 16s linear infinite;
+  opacity: 0.75;
+}
+@keyframes christmasSnowFall {
+  0% {
+    background-position: 0 0;
+  }
+  100% {
+    background-position: 40px 600px;
+  }
 }
 .hero-content {
   position: relative;
@@ -300,8 +334,9 @@ img {
   max-width: 700px;
 }
 .hero-content h1 em {
-  color: var(--primary);
+  color: var(--gold);
   font-weight: 400;
+  text-shadow: 0 0 24px rgba(244, 207, 93, 0.4);
 }
 .hero-tagline {
   font-family: var(--font-display);
@@ -309,7 +344,7 @@ img {
   font-size: 18px;
   margin: 24px 0 17px;
   color: var(--foreground);
-  opacity: 0.85;
+  opacity: 0.9;
 }
 .hero-description {
   font-size: 12px;
@@ -321,17 +356,41 @@ img {
   display: flex;
   gap: 15px;
   margin-top: 32px;
-  /* color: black; */
 }
-.hero-buttons > a { 
-/* .hero-buttons button { */
-  /* color: black; */
+.hero-buttons > a,
+.hero-buttons button { 
   height: 45px;
   font-size: 11px;
 }
+.hero-buttons > a:not(.outline-hero),
+.hero-buttons button:not(.outline-hero) {
+  background: linear-gradient(135deg, #d42426 0%, #a81729 100%) !important;
+  color: #ffffff !important;
+  border: 1px solid #ef4444 !important;
+  box-shadow: 0 4px 20px rgba(212, 36, 38, 0.45), 0 0 10px rgba(244, 207, 93, 0.2) !important;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  transition: all 0.25s ease;
+}
+.hero-buttons > a:not(.outline-hero):hover,
+.hero-buttons button:not(.outline-hero):hover {
+  filter: brightness(1.12);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 25px rgba(212, 36, 38, 0.65), 0 0 16px rgba(244, 207, 93, 0.35) !important;
+}
 .hero-buttons .outline-hero {
-  border-color: color-mix(in oklch, var(--foreground) 30%, transparent);
-  background: transparent;
+  border-color: var(--gold) !important;
+  color: var(--gold) !important;
+  background: rgba(244, 207, 93, 0.08) !important;
+  backdrop-filter: blur(6px);
+  font-weight: 500;
+  transition: all 0.25s ease;
+}
+.hero-buttons .outline-hero:hover {
+  background: rgba(244, 207, 93, 0.22) !important;
+  color: #ffffff !important;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(244, 207, 93, 0.3) !important;
 }
 .hero-caption {
   position: absolute;
@@ -814,20 +873,27 @@ img {
   bottom: max(16px, env(safe-area-inset-bottom, 0px));
   width: 48px;
   height: 48px;
-  border: 1px solid color-mix(in oklch, var(--primary) 65%, var(--border));
+  border: 1.5px solid var(--gold);
   border-radius: 50%;
-  color: var(--primary);
-  background: color-mix(in oklch, var(--card) 92%, transparent);
-  box-shadow: 0 8px 26px color-mix(in oklch, black 30%, transparent);
+  color: var(--gold);
+  background: rgba(17, 38, 29, 0.9);
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.4), 0 0 10px rgba(244, 207, 93, 0.2);
   backdrop-filter: blur(10px);
+  transition: all 0.25s ease;
+}
+.music-toggle:hover {
+  transform: scale(1.08);
+  box-shadow: 0 4px 22px rgba(0, 0, 0, 0.5), 0 0 16px rgba(244, 207, 93, 0.4);
 }
 .music-toggle svg {
   width: 19px;
   height: 19px;
 }
 .music-toggle.is-playing {
-  background: var(--primary);
-  color: var(--primary-foreground);
+  background: linear-gradient(135deg, #d42426, #a81729);
+  color: #ffffff;
+  border-color: var(--gold);
+  box-shadow: 0 0 20px rgba(212, 36, 38, 0.65), 0 0 10px rgba(244, 207, 93, 0.4);
 }
 .music-player {
   position: fixed;
@@ -934,13 +1000,14 @@ img {
   z-index: 2;
   inset: 0 0 auto;
   height: clamp(42px, 8vh, 74px);
-  border-bottom: 1px solid color-mix(in oklch, var(--primary) 70%, transparent);
+  border-bottom: 2px solid var(--gold);
   background: linear-gradient(
     180deg,
-    var(--background),
-    var(--secondary) 72%,
-    color-mix(in oklch, var(--primary) 24%, var(--background))
+    #300408,
+    #660a15 72%,
+    #880f1e
   );
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
   transition:
     transform 1.7s cubic-bezier(0.7, 0, 0.2, 1),
     opacity 1.25s ease;
@@ -954,13 +1021,13 @@ img {
     repeating-linear-gradient(
       90deg,
       transparent 0 18px,
-      color-mix(in oklch, var(--primary) 11%, transparent) 22px,
+      rgba(244, 207, 93, 0.12) 22px,
       transparent 29px
     ),
-    linear-gradient(105deg, var(--background), var(--secondary) 38%, var(--card));
+    linear-gradient(105deg, #3d050a, #750d19 38%, #4f0810);
   box-shadow:
-    inset -24px 0 42px color-mix(in oklch, black 30%, transparent),
-    inset 0 0 38px color-mix(in oklch, var(--primary) 10%, transparent);
+    inset -24px 0 45px rgba(0, 0, 0, 0.7),
+    inset 0 0 40px rgba(244, 207, 93, 0.16);
   transition: transform 2.35s cubic-bezier(0.72, 0, 0.18, 1);
 }
 .curtain-panel:after {
@@ -971,19 +1038,19 @@ img {
   background: radial-gradient(
       circle at 12px 0,
       transparent 8px,
-      color-mix(in oklch, var(--primary) 45%, var(--background)) 8.6px 9px,
+      #f4cf5d 8.6px 9px,
       transparent 9.5px
     )
     0 0 / 24px 18px repeat-x;
 }
 .curtain-panel-left {
   left: 0;
-  border-right: 1px solid color-mix(in oklch, var(--primary) 50%, transparent);
+  border-right: 2px solid #f4cf5d;
 }
 .curtain-panel-right {
   right: 0;
   transform: scaleX(-1);
-  border-left: 1px solid color-mix(in oklch, var(--primary) 50%, transparent);
+  border-left: 2px solid #f4cf5d;
 }
 .opening-curtain--opening .curtain-panel-left {
   transform: translateX(-100%);
@@ -1018,14 +1085,16 @@ img {
   aspect-ratio: 1;
   display: grid;
   place-items: center;
-  border: 1px solid color-mix(in oklch, var(--primary) 70%, transparent);
+  border: 2px solid var(--gold);
   border-radius: 50%;
-  color: var(--primary);
+  color: var(--gold);
+  background: rgba(179, 27, 44, 0.4);
+  box-shadow: 0 0 20px rgba(244, 207, 93, 0.3);
   font-family: var(--font-display);
   font-size: 20px;
 }
 .curtain-centerpiece > span {
-  color: var(--primary);
+  color: var(--gold);
   font-size: 9px;
   letter-spacing: 2.5px;
 }
@@ -1371,11 +1440,12 @@ img {
   flex: 1;
 }
 .ticket {
-  --ticket-ink: oklch(0.24 0.065 310);
-  --ticket-gold-light: oklch(0.88 0.15 94);
-  --ticket-gold-mid: oklch(0.79 0.16 84);
-  --ticket-gold-deep: oklch(0.7 0.17 73);
-  --ticket-stage: oklch(0.2 0.055 310);
+  --ticket-ink: #102117;
+  --ticket-gold-light: #fff8e2;
+  --ticket-gold-mid: #f5cf68;
+  --ticket-gold-deep: #b87d19;
+  --ticket-stage: #163628;
+  --ticket-ribbon: #c92336;
   max-width: 520px;
   margin: 28px auto;
   padding: 30px 34px 24px;
@@ -1384,21 +1454,21 @@ img {
   background: linear-gradient(
     165deg,
     var(--ticket-gold-light) 0%,
-    var(--ticket-gold-mid) 56%,
+    var(--ticket-gold-mid) 50%,
     var(--ticket-gold-deep) 100%
   );
-  border: 3px solid color-mix(in oklch, var(--ticket-ink) 50%, var(--ticket-gold-deep));
+  border: 3px solid #b31b2c;
   text-align: center;
   border-radius: 32px;
   position: relative;
-  box-shadow: 0 22px 48px color-mix(in oklch, var(--ticket-ink) 28%, transparent);
+  box-shadow: 0 22px 55px rgba(179, 27, 44, 0.28), 0 10px 30px rgba(0, 0, 0, 0.5);
 }
 .ticket:before {
   content: "";
   pointer-events: none;
   position: absolute;
-  inset: 5px;
-  border: 1px solid color-mix(in oklch, var(--ticket-ink) 30%, transparent);
+  inset: 6px;
+  border: 1.5px dashed rgba(179, 27, 44, 0.5);
   border-radius: 25px;
 }
 .ticket .brand {
@@ -1723,24 +1793,29 @@ img {
   white-space: nowrap;
   color: var(--muted-foreground);
   background: var(--secondary);
+  border: 1px solid var(--border);
 }
 .status-badge > span {
-  width: 4px;
-  height: 4px;
+  width: 5px;
+  height: 5px;
   border-radius: 50%;
   background: currentColor;
+  box-shadow: 0 0 6px currentColor;
 }
 .status-success {
-  color: var(--success);
-  background: color-mix(in oklch, var(--success) 10%, transparent);
+  color: #2ec46e;
+  background: rgba(46, 196, 110, 0.15);
+  border-color: rgba(46, 196, 110, 0.35);
 }
 .status-danger {
-  color: var(--destructive);
-  background: color-mix(in oklch, var(--destructive) 10%, transparent);
+  color: #ef4444;
+  background: rgba(239, 68, 68, 0.15);
+  border-color: rgba(239, 68, 68, 0.35);
 }
 .status-gold {
-  color: var(--primary);
-  background: color-mix(in oklch, var(--primary) 10%, transparent);
+  color: var(--gold);
+  background: rgba(244, 207, 93, 0.15);
+  border-color: rgba(244, 207, 93, 0.35);
 }
 .status-info {
   color: var(--info);
@@ -1752,9 +1827,10 @@ img {
     transition: transform 1.7s cubic-bezier(0.7, 0, 0.2, 1), opacity 1.25s ease;
 }
 .admin-app {
-  --background: oklch(0.125 0.004 90);
-  --card: oklch(0.17 0.005 90);
-  --secondary: oklch(0.21 0.005 90);
+  --background: #08140e;
+  --card: #0d1e16;
+  --secondary: #132a1f;
+  --border: #1c3d2e;
   --border: oklch(0.265 0.01 90);
   display: flex;
   min-height: 100svh;

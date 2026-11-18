@@ -11,10 +11,10 @@ export function Brand({ compact = false }: { compact?: boolean }) {
         <Sparkles strokeWidth={1.4} />
       </span>
       <span className="brand-word">
-        GenZ Indonesia
+        Christmas Celebration
         <span className="brand-year">
           2026 {!compact && <span className="brand-separator"> / </span>}
-          {!compact && <span className="brand-tagline">Opening PPDB & SemiFinal</span>}
+          {!compact && <span className="brand-tagline">Holiday Ticketing & Gala</span>}
         </span>
       </span>
     </Link>

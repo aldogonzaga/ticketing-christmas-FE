@@ -294,7 +294,7 @@ export function InvitationsPage({ category }: { category?: Category }) {
                         aria-label={`Bagikan tautan undangan ${i.name}`}
                         onClick={() =>
                           window.open(
-                            `https://wa.me/${i.phone.replace(/^0/, "62").replace(/\D/g, "")}?text=${encodeURIComponent(`Sugeng Rawuh, ${i.category === "SMP" ? i.principal : i.name}. Anda diundang ke ${data.settings.name}. ${inviteURL(i.code)}`)}`,
+                            `https://wa.me/${i.phone.replace(/^0/, "62").replace(/\D/g, "")}?text=${encodeURIComponent(`Salam Sejahtera & Selamat Natal, ${i.category === "SMP" ? i.principal : i.name}. Anda diundang ke ${data.settings.name}. ${inviteURL(i.code)}`)}`,
                             "_blank",
                             "noopener,noreferrer",
                           )

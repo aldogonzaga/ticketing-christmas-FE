@@ -81,16 +81,16 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Opening PPDB & SemiFinal Maheswara Maheswari 2027" },
+      { title: "Christmas Celebration 2026" },
       {
         name: "description",
-        content: "Undangan digital Opening PPDB & SemiFinal Maheswara Maheswari 2027.",
+        content: "Undangan digital dan Golden Ticket Christmas Celebration 2026.",
       },
-      { name: "author", content: "Maheswara Maheswari 2027" },
-      { property: "og:title", content: "Opening PPDB & SemiFinal Maheswara Maheswari 2027" },
+      { name: "author", content: "Panitia Natal 2026" },
+      { property: "og:title", content: "Christmas Celebration 2026" },
       {
         property: "og:description",
-        content: "Undangan digital Opening PPDB & SemiFinal Maheswara Maheswari 2027.",
+        content: "Undangan digital dan Golden Ticket Christmas Celebration 2026.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
