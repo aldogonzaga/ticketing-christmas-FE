@@ -1,6 +1,6 @@
 import type { Invitation, Settings, Message, Activity } from "./store";
 
-const API_BASE = "https://ticket-emas-be.wasmer.app/api";
+const API_BASE = import.meta.env.VITE_API_BASE ?? "http://127.0.0.1:8000/api";
 
 function getToken(): string | null {
   return typeof localStorage !== "undefined" ? localStorage.getItem("sambut-token") : null;
@@ -115,7 +115,7 @@ export async function deleteInvitationApi(idOrCode: string) {
 export async function importInvitationsApi(items: Partial<Invitation>[]) {
   return request<{ success: boolean; message: string; count: number }>("/invitations/import", {
     method: "POST",
-    body: JSON.stringify({ items }),
+    body: JSON.stringify({ invitations: items }),
   });
 }
 

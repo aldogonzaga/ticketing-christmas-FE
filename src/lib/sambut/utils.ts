@@ -1,8 +1,8 @@
 import type { Invitation } from "./store";
-export const BRAND = "Opening PPDB & SemiFinal Maheswara Maheswari 2027";
+export const BRAND = "Christmas Celebration 2026";
 export const pageHead = (
   title: string,
-  description = "Undangan digital, Golden Ticket, dan pengelolaan kehadiran Opening PPDB & SemiFinal Maheswara Maheswari 2027.",
+  description = "Undangan digital, Golden Ticket, dan pengelolaan kehadiran Christmas Celebration 2026.",
 ) => ({
   meta: [
     { title: title === BRAND ? title : `${title} — ${BRAND}` },
@@ -31,8 +31,8 @@ export async function exportData(rows: Invitation[], format: "csv" | "xlsx" = "x
   }));
   const sheet = XLSX.utils.json_to_sheet(data);
   const book = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(book, sheet, "Undangan Maheswara");
-  XLSX.writeFile(book, `Opening-PPDB-SemiFinal-Maheswara-Maheswari-2027.${format}`, {
+  XLSX.utils.book_append_sheet(book, sheet, "Undangan Christmas");
+  XLSX.writeFile(book, `Christmas-Celebration-2026.${format}`, {
     bookType: format === "csv" ? "csv" : "xlsx",
   });
 }
