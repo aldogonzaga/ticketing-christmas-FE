@@ -165,16 +165,6 @@ export function HomePage() {
     return () => observer.disconnect();
   }, []);
 
-  function toggleMusic() {
-    const audio = musicRef.current;
-    if (!audio) return;
-    if (audio.paused) {
-      void audio.play().catch(() => toast.error("Musik tidak dapat diputar pada peramban ini"));
-    } else {
-      audio.pause();
-    }
-  }
-
   return (
     <PublicLayout>
       <main className="public-home" ref={revealRoot}>
@@ -427,31 +417,6 @@ export function HomePage() {
             </div>
           </div>
         )}
-        <audio
-          aria-label="Musik pengiring Medley"
-          hidden
-          loop
-          preload="none"
-          ref={musicRef}
-          src={medleyMusic}
-          onPlay={() => setMusicPlaying(true)}
-          onPause={() => setMusicPlaying(false)}
-          onError={() =>
-            toast.error("File Medley.mp3 tidak dapat dimuat atau formatnya tidak didukung")
-          }
-        />
-        <Button
-          type="button"
-          variant="outline"
-          size="icon"
-          className={`music-toggle ${musicPlaying ? "is-playing" : ""}`}
-          aria-label={musicPlaying ? "Matikan musik Medley" : "Putar musik Medley"}
-          aria-pressed={musicPlaying}
-          title={musicPlaying ? "Matikan musik Medley" : "Putar musik Medley"}
-          onClick={toggleMusic}
-        >
-          {musicPlaying ? <VolumeX /> : <Volume2 />}
-        </Button>
       </main>
     </PublicLayout>
   );
