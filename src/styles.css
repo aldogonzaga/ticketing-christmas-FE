@@ -954,11 +954,14 @@ img {
   display: grid;
   place-items: center;
   justify-self: center;
-  border: 1px solid var(--paper-ink);
+  border: 2px solid var(--gold);
   border-radius: 50%;
-  background: var(--paper);
+  background: #ffffff;
+  color: var(--primary);
   font-family: var(--font-display);
-  font-size: 14px;
+  font-size: 15px;
+  font-weight: 600;
+  box-shadow: 0 4px 14px rgba(217, 119, 6, 0.25);
 }
 .schedule-step time {
   justify-self: end;
@@ -1665,7 +1668,7 @@ img {
   margin: 25px auto;
 }
 .ticket-page-section {
-  --ticket-stage: oklch(0.2 0.055 310);
+  --ticket-stage: #eef7f2;
   min-height: calc(100svh - 91px);
   padding: 52px 0 64px;
   color: var(--foreground);
@@ -2953,7 +2956,7 @@ img {
   }
   .hero-shade {
     background:
-      linear-gradient(90deg, oklch(0.1 0.01 90/0.85), oklch(0.1 0.01 90/0.38)),
+      linear-gradient(180deg, rgba(247, 250, 248, 0.95) 0%, rgba(247, 250, 248, 0.85) 60%, rgba(247, 250, 248, 0.4) 100%),
       linear-gradient(0deg, var(--background), transparent 45%);
   }
   .hero-content {

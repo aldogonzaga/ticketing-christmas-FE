@@ -9,7 +9,6 @@ import {
   Sparkles,
   Heart,
   GraduationCap,
-  Flower2,
   Quote,
   Download,
   Printer,
@@ -26,7 +25,7 @@ import { QRCodeSVG } from "qrcode.react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import templeImage from "@/assets/borobudur-dawn.jpg";
-import maheswaraGroupPhoto from "@/assets/mhs.jpeg";
+import christmasGroupPhoto from "@/assets/mhs.jpeg";
 import medleyMusic from "@/assets/Medley.mp3";
 import popupImage from "@/assets/PopUp1.jpeg";
 import background2Image from "@/assets/background2.jpeg";
@@ -52,7 +51,7 @@ const googleCalendarUrl = `https://calendar.google.com/calendar/render?action=TE
   "Christmas Celebration 2026"
 )}&dates=20261225T020000Z/20261225T050000Z&details=${encodeURIComponent(
   "Merayakan damai, sukacita, dan kehangatan Natal bersama keluarga dan sahabat."
-)}&location=${encodeURIComponent("Milenia Hub - Platinum Cineplex")}`;
+)}&location=${encodeURIComponent("Grand Ballroom")}`;
 
 function Countdown() {
   const { data } = useSambut();
@@ -239,7 +238,7 @@ export function HomePage() {
                   >
                     {data.settings.date
                       ? "Simpan tanggal istimewanya"
-                      : "24 October 2026 Dan 31 October 2026"}{" "}
+                      : "25 Desember 2026"}{" "}
                     <CalendarPlus size={14} />
                   </a>
                 </div>
@@ -256,13 +255,13 @@ export function HomePage() {
                 <div className="fact-note">
                   <a
                     href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
-                      "Milenia Hub Platinum Cineplex"
+                      data.settings.location || "Grand Ballroom"
                     )}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="hover:underline text-inherit inline-flex items-center gap-1"
                   >
-                    Milenia Hub - Platinum Cineplex ↗
+                    {data.settings.location || "Lihat Peta Lokasi"} ↗
                   </a>
                 </div>
               </div>
@@ -292,7 +291,7 @@ export function HomePage() {
                 </div>
                 <div className="home-photo-image">
                   <img
-                    src={maheswaraGroupPhoto}
+                    src={christmasGroupPhoto}
                     width={1200}
                     height={900}
                     alt="Kebersamaan Natal bersama keluarga dan sahabat"
@@ -454,11 +453,11 @@ function EventRegistrationForm() {
   return (
     <div className="registration-content">
       {showPromoPopup && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/85 p-4 backdrop-blur-sm animate-in fade-in duration-300">
-          <div className="relative max-w-sm w-full bg-neutral-900 rounded-2xl overflow-hidden shadow-2xl border border-neutral-800">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm animate-in fade-in duration-300">
+          <div className="relative max-w-sm w-full bg-white text-foreground rounded-2xl overflow-hidden shadow-2xl border border-border">
             <button
               onClick={() => setShowPromoPopup(false)}
-              className="absolute top-3 right-3 z-10 p-2 rounded-full bg-black/70 text-white hover:bg-black transition-colors"
+              className="absolute top-3 right-3 z-10 p-2 rounded-full bg-black/50 text-white hover:bg-black/70 transition-colors"
               aria-label="Tutup pop-up"
             >
               <X size={20} />
@@ -467,12 +466,12 @@ function EventRegistrationForm() {
             <div className="relative">
               <img
                 src={popupImage}
-                alt="Nobar Movie Package Platinum Cineplex"
+                alt="Spesial Christmas Celebration 2026"
                 className="w-full h-auto object-cover max-h-[70vh]"
               />
             </div>
 
-            <div className="p-4 bg-neutral-900 text-center">
+            <div className="p-4 bg-white text-center">
               <Button
                 onClick={confirmAndGetTicket}
                 className="w-full text-sm font-semibold"
@@ -504,11 +503,11 @@ function EventRegistrationForm() {
 }
 
 const titah = {
-  heading: ["Menjaga Marwah,", "Mencetak Sejarah"],
-  author: "Dr. Darmawan Sunarja, Drs., MM.Par",
-  role: "Kepala Sekolah",
-  id: "Selamat datang di SMK Metland Cibitung. Terima kasih telah menjadi bagian dari Generasi Cinta Prestasi (GCP) yang bukan hanya sekadar capaian akademis, melainkan komitmen untuk memanggul warisan luhur budaya nusantara di tengah pusaran modernitas. Kami memadukan disiplin tinggi dengan tata krama budaya ketimuran untuk memastikan setiap lulusan tidak hanya terampil, tetapi juga berkarakter unggul.",
-  jv: "Sugeng rawuh ing SMK Metland Cibitung. Matur nuwun sampun dados pérangan saking Generasi Cinta Prestasi (GCP). GCP boten namung babagan prestasi, nanging ugi babagan nguri-uri budaya lan nilai-nilai luhur Nusantara ing tengahing perkembangan jaman. Ing sekolah kita, kedisiplinan lan tata krama dados landhesan kangge mbentuk para lulusan ingkang trampil, kompeten, saha gadhah budi pekerti lan karakter ingkang unggul.",
+  heading: ["Damai di Bumi,", "Sukacita di Hati"],
+  author: "Panitia Christmas Celebration",
+  role: "Pesan & Renungan Kasih 2026",
+  id: "Selamat datang di Christmas Celebration 2026. Kiranya damai sejahtera, pengharapan yang baru, dan kehangatan Natal senantiasa melingkupi kita semua bersama keluarga dan sahabat terkasih. Mari kita rayakan momen kudus ini dengan penuh syukur, sukacita, dan kebersamaan.",
+  jv: "May the peace, joy, and hope of Christmas fill your heart and home with warmth, love, and laughter throughout this festive season and into the New Year.",
 };
 
 export function TitahSection() {
@@ -526,7 +525,7 @@ export function TitahSection() {
       return;
     }
     const utter = new SpeechSynthesisUtterance(key === "id" ? titah.id : titah.jv);
-    utter.lang = key === "id" ? "id-ID" : "jv-ID";
+    utter.lang = key === "id" ? "id-ID" : "en-US";
     utter.rate = 0.94;
     utter.onend = () => setPlaying("");
     utter.onerror = () => setPlaying("");
@@ -535,7 +534,7 @@ export function TitahSection() {
   }
   const quotes = [
     { key: "id" as const, label: "Bahasa Indonesia", text: titah.id },
-    { key: "jv" as const, label: "Basa Jawa", text: titah.jv },
+    { key: "jv" as const, label: "English Message", text: titah.jv },
   ];
   return (
     <section className="titah-section">
@@ -543,8 +542,8 @@ export function TitahSection() {
         <figure className="titah-card">
           <span className="titah-crest">
             <Sparkles />
-            <strong>{data.settings.school || "SMK Metland"}</strong>
-            <small>Generasi Cinta Prestasi</small>
+            <strong>{data.settings.school || "Christmas Celebration"}</strong>
+            <small>Joy, Peace & Love 2026</small>
           </span>
           <figcaption>
             <span className="titah-author">{titah.author}</span>
@@ -552,7 +551,7 @@ export function TitahSection() {
           </figcaption>
         </figure>
         <div className="titah-body">
-          <SectionLabel>TITAH KEBESARAN</SectionLabel>
+          <SectionLabel>PESAN NATAL</SectionLabel>
           <h2 className="display-heading">
             {titah.heading[0]}
             <br />
@@ -664,12 +663,12 @@ function MessagesSectionContent() {
       <SectionLabel>SUARA & HARAPAN</SectionLabel>
       <h1 className="page-heading mb-2">yang menghangatkan.</h1>
       <p className="page-intro mb-8">
-        Titipkan doa, semangat, dan harapan untuk Maheswara Maheswari 2027.
+        Titipkan ucapan selamat Natal, doa damai, dan harapan sukacita untuk kita semua.
       </p>
 
       <div className="relative w-full overflow-hidden mb-10 py-4 no-scrollbar">
-        <div className="pointer-events-none absolute left-0 top-0 z-10 h-full w-16 bg-gradient-to-r from-black to-transparent" />
-        <div className="pointer-events-none absolute right-0 top-0 z-10 h-full w-16 bg-gradient-to-l from-black to-transparent" />
+        <div className="pointer-events-none absolute left-0 top-0 z-10 h-full w-16 bg-gradient-to-r from-[#f7faf8] to-transparent" />
+        <div className="pointer-events-none absolute right-0 top-0 z-10 h-full w-16 bg-gradient-to-l from-[#f7faf8] to-transparent" />
 
         <div className="marquee-track gap-6">
           {marqueeMessages.map((m, i) => (
@@ -801,7 +800,11 @@ export function GoldenTicket({
       <div className="ticket-location">
         <MapPin aria-hidden="true" />
         <div>
-          <strong>Sabtu, 31 Oktober 2026 pukul 10.00 - 12.00</strong>
+          <strong>
+            {data.settings.date
+              ? eventDate(data.settings.date)
+              : "Jumat, 25 Desember 2026 pukul 09.00 - 12.30 WIB"}
+          </strong>
           <span>LOCATION · {data.settings.location || "Segera diumumkan"}</span>
           {data.settings.location && (
             <a
@@ -924,7 +927,7 @@ export function TicketPage({ code, customName }: { code: string; customName?: st
                   variant="outline"
                   onClick={() =>
                     window.open(
-                      `https://wa.me/?text=${encodeURIComponent(`Anda diundang ke ${data.settings.name}.${inviteURL(code)}`)}`,
+                      `https://wa.me/?text=${encodeURIComponent(`Salam Sejahtera & Selamat Natal! Anda diundang ke ${data.settings.name}. Buka tiket undangan Anda di: ${inviteURL(code)}`)}`,
                       "_blank",
                       "noopener,noreferrer",
                     )

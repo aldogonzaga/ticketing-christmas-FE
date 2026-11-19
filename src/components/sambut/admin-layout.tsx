@@ -76,7 +76,7 @@ export function AdminLayout({ children }: { children: ReactNode }) {
               <Menu />
             </Button>
             <span>
-              Ruang Panitia <span className="text-primary px-2">/</span> 2027
+              Ruang Panitia <span className="text-primary px-2">/</span> Christmas 2026
             </span>
           </div>
           <div className="admin-header-right">
@@ -90,7 +90,7 @@ export function AdminLayout({ children }: { children: ReactNode }) {
               <div className="admin-avatar">AD</div>
               <div>
                 <strong>Administrator</strong>
-                <small>Panitia 2027</small>
+                <small>Panitia Natal 2026</small>
               </div>
             </div>
           </div>

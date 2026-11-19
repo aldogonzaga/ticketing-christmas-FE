@@ -85,9 +85,9 @@ export function PublicLayout({ children }: { children: ReactNode }) {
           <div className="footer-brand">
             <Brand compact />
             <p>
-              Merawat budaya. Menyalakan cita.
+              Merayakan damai dan sukacita Natal bersama.
               <br />
-              Merayakan setiap langkah generasi berprestasi.
+              Momen indah dan penuh kehangatan untuk keluarga & sahabat tercinta.
             </p>
           </div>
           <nav className="footer-navigation" aria-label="Navigasi footer">
@@ -110,11 +110,12 @@ export function PublicLayout({ children }: { children: ReactNode }) {
           </div>
         </div>
         <div className="page-width footer-bottom">
-          © 2026 GenZ Indonesia. Seluruh hak cipta dilindungi. <Link to="/admin/login" className="admin-acces">
-          akses panitia
+          © 2026 Christmas Celebration. Seluruh hak cipta dilindungi.{" "}
+          <Link to="/admin/login" className="admin-access">
+            Akses Panitia
           </Link>
           <span>
-            <Flower2 size={13} /> 
+            <Sparkles size={13} /> 
           </span>
         </div>
       </footer>

@@ -67,7 +67,7 @@ export function InvitationsPage({ category }: { category?: Category }) {
         : category === "VIP"
           ? "Tamu VIP"
           : category === "Orang Tua/Wali"
-            ? "Orang Tua / Wali Mahes 2027"
+            ? "Orang Tua / Wali / Keluarga"
             : "Semua Undangan";
   const changeFilter = (fn: () => void) => {
     fn();

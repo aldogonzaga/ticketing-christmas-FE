@@ -223,7 +223,7 @@ export function SchoolLinksPage() {
                         variant="outline"
                         onClick={() =>
                           window.open(
-                            `https://wa.me/?text=${encodeURIComponent(`Silakan isi data peserta ${s.name} untuk Opening PPDB & SemiFinal Maheswara Maheswari 2027: ${schoolURL(s.code)}`)}`,
+                            `https://wa.me/?text=${encodeURIComponent(`Silakan isi data kehadiran peserta ${s.name} untuk Christmas Celebration 2026: ${schoolURL(s.code)}`)}`,
                             "_blank",
                             "noopener,noreferrer",
                           )

@@ -125,7 +125,7 @@ export function InvitationForm({
           {form.category === "Orang Tua/Wali" && (
             <>
               <label className="field">
-                <span>Nama siswa Mahes 2027</span>
+                <span>Nama Anggota Keluarga / Tamu</span>
                 <input
                   value={form.student}
                   onChange={(e) => update("student", e.target.value)}
@@ -299,8 +299,8 @@ export function BulkImporter({ onClose }: { onClose: () => void }) {
           }}
           placeholder={
             category === "SMP"
-              ? "SMP Negeri 5 | Budi Santoso | Ani | 08123456789 | A-06"
-              : "Budi Santoso | SMK Metland | 08123456789 | B-01"
+              ? "Keluarga Budi | Wilayah 1 | 08123456789 | A-06"
+              : "Budi Santoso | Tamu Undangan | 08123456789 | B-01"
           }
         />
       </label>

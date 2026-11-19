@@ -30,7 +30,10 @@ export function LoginPage() {
   async function submit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const f = new FormData(e.currentTarget);
-    if (f.get("username") !== "admin" || f.get("password") !== "GenZ2026") {
+    if (
+      f.get("username") !== "admin" ||
+      (f.get("password") !== "Natal2026" && f.get("password") !== "GenZ2026")
+    ) {
       setError("Username atau password demo tidak sesuai.");
       return;
     }
@@ -564,10 +567,10 @@ export function SettingsPage() {
                 reset();
                 setDraft({
                   name: "Christmas Celebration 2026",
-                  school: "SMK Metland",
+                  school: "Panitia Natal 2026",
                   date: "",
                   location: "",
-                  tagline: "Empowering Our Chapter Through Indonesian Culture",
+                  tagline: "Merajut Kasih, Berbagi Damai & Sukacita Natal",
                   contact: "",
                   groupPhoto: "",
                 });
