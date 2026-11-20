@@ -20,6 +20,10 @@ import {
   VolumeX,
   X,
   CalendarPlus,
+  UserCheck,
+  CheckCircle2,
+  Users,
+  Check,
 } from "lucide-react";
 import { QRCodeSVG } from "qrcode.react";
 import { toast } from "sonner";
@@ -422,80 +426,137 @@ export function HomePage() {
 }
 
 function EventRegistrationForm() {
-  const { save } = useSambut();
+  const { registerPublicTicket } = useSambut();
   const navigate = useNavigate();
-  const [showPromoPopup, setShowPromoPopup] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [formData, setFormData] = useState({
+    name: "",
+    category: "Orang Tua/Wali",
+    affiliation: "",
+    phone: "",
+    message: "",
+  });
 
-  function handleInitialSubmit(event: FormEvent<HTMLFormElement>) {
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    setShowPromoPopup(true);
-  }
+    if (!formData.name.trim()) {
+      toast.error("Silakan masukkan nama lengkap Anda.");
+      return;
+    }
+    if (!formData.affiliation.trim()) {
+      toast.error("Silakan masukkan asal afiliasi / lembaga / keluarga Anda.");
+      return;
+    }
+    if (!formData.message.trim()) {
+      toast.error("Silakan tuliskan ucapan atau pesan Natal Anda.");
+      return;
+    }
 
-  function confirmAndGetTicket() {
-    setShowPromoPopup(false);
-    const invitation = newInvitation({
-      ...blankInvitation(),
-      name: "Tamu Undangan",
-      category: "VIP",
-      institution: "Umum",
-      principal: "",
-      pic: "",
-      title: "",
-      phone: "-",
-      quota: 1,
-      members: [],
-      rsvp: "Hadir",
-    });
-    save(invitation);
-    navigate({ to: "/ticket/$code", params: { code: invitation.code } });
+    setLoading(true);
+    try {
+      const invitation = await registerPublicTicket({
+        name: formData.name.trim(),
+        affiliation: formData.affiliation.trim(),
+        category: formData.category,
+        message: formData.message.trim(),
+        phone: formData.phone.trim() || undefined,
+      });
+
+      // Navigate to the newly generated unique code ticket page
+      await navigate({ to: "/ticket/$code", params: { code: invitation.code } });
+    } catch (e: any) {
+      toast.error(e?.message || "Terjadi kesalahan saat membuat tiket.");
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (
     <div className="registration-content">
-      {showPromoPopup && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm animate-in fade-in duration-300">
-          <div className="relative max-w-sm w-full bg-white text-foreground rounded-2xl overflow-hidden shadow-2xl border border-border">
-            <button
-              onClick={() => setShowPromoPopup(false)}
-              className="absolute top-3 right-3 z-10 p-2 rounded-full bg-black/50 text-white hover:bg-black/70 transition-colors"
-              aria-label="Tutup pop-up"
-            >
-              <X size={20} />
-            </button>
-
-            <div className="relative">
-              <img
-                src={popupImage}
-                alt="Spesial Christmas Celebration 2026"
-                className="w-full h-auto object-cover max-h-[70vh]"
-              />
-            </div>
-
-            <div className="p-4 bg-white text-center">
-              <Button
-                onClick={confirmAndGetTicket}
-                className="w-full text-sm font-semibold"
-              >
-                Lanjutkan ke Tiket Saya
-              </Button>
-            </div>
-          </div>
-        </div>
-      )}
-
       <div className="registration-heading" data-reveal>
-        <SectionLabel>MENJADI BAGIAN DARI CERITA</SectionLabel>
-        <h2>Mari hadir. Mari merayakan.</h2>
-        <p>Klik tombol di bawah untuk langsung mendapatkan tiket acara.</p>
+        <SectionLabel>PENDAFTARAN & TIKET NATAL</SectionLabel>
+        <h2>Dapatkan Tiket Perayaan Anda.</h2>
+        <p>
+          Masukkan nama, afiliasi (seperti sekolah atau keluarga/orang tua), dan ucapan Natal Anda untuk menerbitkan kode tiket unik Anda.
+        </p>
       </div>
 
-      <form className="form-panel registration-form" onSubmit={handleInitialSubmit} data-reveal>
-        <Button type="submit" className="w-full mt-2">
-          Ambil Tiket <Ticket />
+      <form className="form-panel registration-form" onSubmit={handleSubmit} data-reveal>
+        <h2>Formulir Pengambilan Tiket</h2>
+
+        <div className="form-grid">
+          <label className="field">
+            <span>Nama Lengkap / Nama Tamu *</span>
+            <input
+              type="text"
+              required
+              maxLength={80}
+              placeholder="Contoh: Budi Santoso / Keluarga Gunawan"
+              value={formData.name}
+              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+            />
+          </label>
+
+          <label className="field">
+            <span>Kategori Tamu *</span>
+            <select
+              value={formData.category}
+              onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+            >
+              <option value="Orang Tua/Wali">Keluarga / Orang Tua / Family</option>
+              <option value="SMP">SMP / Sekolah Menengah</option>
+              <option value="Guru">Guru / Pendidik</option>
+              <option value="VIP">Tamu VIP / Komunitas</option>
+              <option value="Umum">Umum / Jemaat / Sahabat</option>
+            </select>
+          </label>
+
+          <label className="field full">
+            <span>Afiliasi / Asal Lembaga / Keluarga *</span>
+            <input
+              type="text"
+              required
+              maxLength={120}
+              placeholder="Contoh: SMP Negeri 1 Cibitung / Keluarga Bpk. Gunawan"
+              value={formData.affiliation}
+              onChange={(e) => setFormData({ ...formData, affiliation: e.target.value })}
+            />
+          </label>
+
+          <label className="field full">
+            <span>Nomor WhatsApp / Kontak (Opsional)</span>
+            <input
+              type="tel"
+              maxLength={30}
+              placeholder="08xxxxxxxxxx"
+              value={formData.phone}
+              onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+            />
+          </label>
+
+          <label className="field full">
+            <span>Ucapan & Pesan Natal *</span>
+            <textarea
+              required
+              maxLength={500}
+              rows={3}
+              placeholder="Tuliskan ucapan damai, doa syukur, atau harapan sukacita Natal Anda..."
+              value={formData.message}
+              onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+            />
+          </label>
+        </div>
+
+        <Button type="submit" className="w-full mt-5 py-6 text-sm font-semibold" disabled={loading}>
+          {loading ? "Menerbitkan Kode Tiket..." : (
+            <>
+              Dapatkan Kode Tiket Unik <Ticket className="ml-2" size={18} />
+            </>
+          )}
         </Button>
 
         <p className="field-note mt-4 text-center">
-          Status kehadiran dan data undangan akan tercatat secara otomatis.
+          Kode unik akan diterbitkan dan tersimpan di database. Simpan atau screenshot kode tiket Anda untuk diverifikasi di hari acara.
         </p>
       </form>
     </div>

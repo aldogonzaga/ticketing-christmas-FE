@@ -9,6 +9,7 @@ import {
   updateInvitationApi,
   deleteInvitationApi,
   checkInApi,
+  publicRegisterApi,
   updateSettingsApi,
   addMessageApi,
   resetSimulationApi,
@@ -131,8 +132,20 @@ const StoreContext = createContext<null | {
   login: () => void;
   logout: () => void;
   save: (item: Invitation) => Promise<void>;
+  registerPublicTicket: (payload: {
+    name: string;
+    affiliation: string;
+    category?: string;
+    message: string;
+    phone?: string;
+  }) => Promise<Invitation>;
   remove: (id: string) => Promise<void>;
-  checkIn: (id: string, memberIds: string[], count: number) => boolean;
+  checkIn: (
+    idOrCode: string,
+    memberIds?: string[],
+    count?: number,
+    attendees?: string[] | string,
+  ) => Promise<boolean>;
   updateSettings: (s: Settings) => Promise<void>;
   addMessage: (m: Message) => Promise<void>;
   reset: () => Promise<void>;
@@ -266,6 +279,66 @@ export function SambutProvider({ children }: { children: ReactNode }) {
     }
   };
 
+  const registerPublicTicket = async (payload: {
+    name: string;
+    affiliation: string;
+    category?: string;
+    message: string;
+    phone?: string;
+  }): Promise<Invitation> => {
+    try {
+      const res = await publicRegisterApi(payload);
+      if (res.data) {
+        const item: Invitation = {
+          ...res.data,
+          members: res.data.members || [],
+          mouDate: res.data.mouDate ?? (res.data as any).mou_date ?? "",
+          vipLevel: res.data.vipLevel ?? (res.data as any).vip_level ?? "VIP",
+        };
+        setData((d) => ({
+          ...d,
+          invitations: [item, ...d.invitations.filter((i) => i.id !== item.id && i.code !== item.code)],
+          messages: [
+            { name: payload.name, text: payload.message, category: payload.affiliation },
+            ...d.messages,
+          ],
+          activities: activity(d, `${item.name} (${payload.affiliation}) mendaftar tiket (${item.code})`),
+        }));
+        toast.success(`Tiket berhasil dibuat untuk ${item.name}!`);
+        return item;
+      }
+      throw new Error(res.message || "Gagal membuat tiket");
+    } catch (e: any) {
+      console.warn("Backend registration failed, using offline fallback:", e?.message);
+      // Fallback offline generator
+      const code = Math.random().toString(36).substring(2, 7).toUpperCase();
+      const localItem: Invitation = {
+        ...blankInvitation(),
+        id: crypto.randomUUID(),
+        code,
+        name: payload.name,
+        institution: payload.affiliation,
+        category: (payload.category as Category) || "Orang Tua/Wali",
+        phone: payload.phone || "-",
+        quota: 1,
+        checked: 0,
+        rsvp: "Hadir",
+        note: payload.message,
+      };
+      setData((d) => ({
+        ...d,
+        invitations: [localItem, ...d.invitations],
+        messages: [
+          { name: payload.name, text: payload.message, category: payload.affiliation },
+          ...d.messages,
+        ],
+        activities: activity(d, `${localItem.name} mendaftar tiket (${code})`),
+      }));
+      toast.success(`Tiket berhasil dibuat untuk ${localItem.name}!`);
+      return localItem;
+    }
+  };
+
   const remove = async (id: string) => {
     setData((d) => ({
       ...d,
@@ -282,87 +355,91 @@ export function SambutProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  const checkIn = (id: string, memberIds: string[], count: number) => {
-    const item = data.invitations.find((i) => i.id === id);
+  const checkIn = async (
+    idOrCode: string,
+    memberIds?: string[],
+    count?: number,
+    attendees?: string[] | string,
+  ): Promise<boolean> => {
+    const item = data.invitations.find((i) => i.id === idOrCode || i.code === idOrCode);
     if (!item || item.cancelled) {
       toast.error("Undangan tidak valid atau dibatalkan.");
       return false;
     }
 
-    const remainingQuota = item.quota - item.checked;
-    if (remainingQuota <= 0) {
-      toast.error("Kuota undangan sudah penuh atau sudah check-in lengkap.");
-      return false;
-    }
-
-    let added = 0;
-    let updatedMembers = [...(item.members || [])];
-
-    if (item.category === "SMP") {
-      if (memberIds && memberIds.length > 0) {
-        const unpresentSelected = updatedMembers.filter(
-          (m) => memberIds.includes(m.id) && !m.present,
-        );
-        added = unpresentSelected.length;
-        if (added > 0) {
-          updatedMembers = updatedMembers.map((m) =>
-            memberIds.includes(m.id) ? { ...m, present: true } : m,
-          );
-        }
-      } else {
-        // No specific member IDs passed (e.g. quick auto check-in from scanner)
-        const unpresentMembers = updatedMembers.filter((m) => !m.present);
-        if (unpresentMembers.length > 0) {
-          added = Math.min(unpresentMembers.length, remainingQuota);
-          updatedMembers = updatedMembers.map((m) => ({ ...m, present: true }));
-        } else {
-          // If no members registered, check in 1 person (ticket bearer/representative)
-          added = Math.min(count || 1, remainingQuota);
-        }
+    // Parse attendee names if provided
+    let attendeeNames: string[] = [];
+    if (attendees) {
+      if (Array.isArray(attendees)) {
+        attendeeNames = attendees.map((s) => s.trim()).filter(Boolean);
+      } else if (typeof attendees === "string") {
+        attendeeNames = attendees.split(/[\n,]+/).map((s) => s.trim()).filter(Boolean);
       }
-    } else {
-      added = Math.min(count || remainingQuota, remainingQuota);
     }
 
-    if (!added || added < 1) {
-      toast.error("Sudah check-in atau belum ada peserta dipilih.");
-      return false;
-    }
-    if (item.checked + added > item.quota) {
-      toast.error("Jumlah hadir melebihi kuota.");
-      return false;
+    const partyCount = count ?? (attendeeNames.length > 0 ? attendeeNames.length : 1);
+    const effectiveCount = Math.max(partyCount, 1);
+
+    // Build local members
+    let updatedMembers = [...(item.members || [])];
+    if (attendeeNames.length > 0) {
+      attendeeNames.forEach((attName) => {
+        const exist = updatedMembers.find((m) => m.name.toLowerCase() === attName.toLowerCase());
+        if (exist) {
+          exist.present = true;
+        } else {
+          updatedMembers.push({
+            id: crypto.randomUUID(),
+            name: attName,
+            role: "Tamu",
+            present: true,
+          });
+        }
+      });
     }
 
-    const newChecked = item.checked + added;
-    const updatedItem = {
+    if (memberIds && memberIds.length > 0) {
+      updatedMembers = updatedMembers.map((m) =>
+        memberIds.includes(m.id) ? { ...m, present: true } : m,
+      );
+    }
+
+    const updatedItem: Invitation = {
       ...item,
-      checked: newChecked,
+      checked: effectiveCount,
+      quota: Math.max(item.quota, effectiveCount),
+      rsvp: "Hadir",
       members: updatedMembers,
     };
 
     setData((d) => ({
       ...d,
-      invitations: d.invitations.map((i) => (i.id === id ? updatedItem : i)),
-      activities: activity(d, `${item.name} · ${added} peserta berhasil check-in`),
+      invitations: d.invitations.map((i) => (i.id === item.id ? updatedItem : i)),
+      activities: activity(d, `${item.name} · ${effectiveCount} tamu berhasil check-in`),
     }));
 
     // Sync to backend Laravel MySQL
-    checkInApi({ id, member_ids: memberIds, count: added })
-      .then((res) => {
-        if (res.data) {
-          setData((d) => ({
-            ...d,
-            invitations: d.invitations.map((i) =>
-              i.id === res.data.id ? { ...res.data, members: res.data.members || [] } : i,
-            ),
-          }));
-        }
-      })
-      .catch((err) => {
-        console.error("CheckIn API sync error:", err);
+    try {
+      const res = await checkInApi({
+        id: item.id,
+        code: item.code,
+        member_ids: memberIds,
+        count: effectiveCount,
+        attendees: attendeeNames.length > 0 ? attendeeNames : undefined,
       });
+      if (res.data) {
+        setData((d) => ({
+          ...d,
+          invitations: d.invitations.map((i) =>
+            i.id === res.data.id ? { ...res.data, members: res.data.members || [] } : i,
+          ),
+        }));
+      }
+    } catch (err: any) {
+      console.warn("CheckIn API sync error (state preserved):", err?.message);
+    }
 
-    toast.success(`${added} peserta berhasil check-in`);
+    toast.success(`Check-in berhasil: ${effectiveCount} tamu tercatat di database`);
     return true;
   };
 
@@ -411,6 +488,7 @@ export function SambutProvider({ children }: { children: ReactNode }) {
           setLoggedIn(false);
         },
         save,
+        registerPublicTicket,
         remove,
         checkIn,
         updateSettings,

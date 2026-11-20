@@ -131,6 +131,7 @@ export async function checkInApi(payload: {
   code?: string;
   member_ids?: string[];
   count?: number;
+  attendees?: string[] | string;
 }) {
   return request<{
     success: boolean;
@@ -143,7 +144,25 @@ export async function checkInApi(payload: {
   });
 }
 
-// ----------------- Public Ticket & School Portal -----------------
+// ----------------- Public Ticket & Registration -----------------
+export async function publicRegisterApi(payload: {
+  name: string;
+  affiliation: string;
+  category?: string;
+  message: string;
+  phone?: string;
+}) {
+  return request<{
+    success: boolean;
+    message: string;
+    code: string;
+    data: Invitation;
+  }>("/public/register", {
+    method: "POST",
+    body: JSON.stringify(payload),
+  });
+}
+
 export async function getPublicDataApi() {
   return request<{
     success: boolean;
