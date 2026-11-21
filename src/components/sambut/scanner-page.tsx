@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { Camera, ScanLine, Square, Check, ArrowRight, CheckCircle2, UserCheck, AlertTriangle, X } from "lucide-react";
+import { Camera, ScanLine, Square, Check, ArrowRight, CheckCircle2, UserCheck, AlertTriangle, X, Users, Quote } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useSambut, type Invitation } from "@/lib/sambut/store";
 import { toast } from "sonner";
@@ -181,8 +181,18 @@ export function CheckInPanel({
   id: string;
   onContinueScan?: () => void;
 }) {
-  const { data } = useSambut();
+  const { data, checkIn } = useSambut();
   const item = data.invitations.find((i) => i.id === id);
+
+  const [partyCount, setPartyCount] = useState<number>(() => item?.checked || 1);
+  const [attendeeNames, setAttendeeNames] = useState<string>("");
+  const [saving, setSaving] = useState(false);
+
+  useEffect(() => {
+    if (item) {
+      setPartyCount(item.checked || 1);
+    }
+  }, [item?.id, item?.checked]);
 
   if (!item) {
     return (
@@ -200,6 +210,22 @@ export function CheckInPanel({
 
   const isFull = item.checked >= item.quota;
   const isCancelled = item.cancelled;
+
+  async function handleUpdateAttendance() {
+    setSaving(true);
+    try {
+      const names = attendeeNames
+        .split(/[\n,]+/)
+        .map((s) => s.trim())
+        .filter(Boolean);
+      const ok = await checkIn(item.id, [], partyCount, names.length ? names : undefined);
+      if (ok) {
+        toast.success(`Kehadiran ${partyCount} orang berhasil diperbarui di database!`);
+      }
+    } finally {
+      setSaving(false);
+    }
+  }
 
   return (
     <div className="scan-info">
@@ -225,7 +251,7 @@ export function CheckInPanel({
 
       <h2 className="text-2xl font-bold leading-tight">{item.name}</h2>
       <p className="text-muted-foreground mt-1 text-sm">
-        {item.category === "SMP" ? (item.principal ? `${item.principal} \u00b7 Kepala Sekolah` : "Kepala Sekolah") : item.institution || "Tamu Undangan"}
+        {item.category === "SMP" ? (item.principal ? `${item.principal} · Kepala Sekolah` : "Kepala Sekolah") : item.institution || "Tamu Undangan"}
         <br />
         <span className="font-mono text-xs bg-muted/60 px-1.5 py-0.5 rounded text-foreground font-semibold">
           {item.code}
@@ -233,7 +259,14 @@ export function CheckInPanel({
         · <span className="text-primary font-medium">{item.category}</span>
       </p>
 
-      <div className="scan-summary mt-5">
+      {item.note && (
+        <div className="mt-3 p-3 rounded-lg bg-amber-500/10 border border-amber-500/20 text-xs text-foreground italic flex items-start gap-2">
+          <Quote className="w-4 h-4 text-amber-500 shrink-0 mt-0.5" />
+          <span>&ldquo;{item.note}&rdquo;</span>
+        </div>
+      )}
+
+      <div className="scan-summary mt-4">
         <div>
           <small>Total Kuota</small>
           <strong>{item.quota} Tamu</strong>
@@ -256,8 +289,52 @@ export function CheckInPanel({
         </p>
       )}
 
+      {/* ── Form Update Jumlah Rombongan & Hadir (Hari-H) ── */}
+      {!isCancelled && (
+        <div className="mt-4 p-4 rounded-xl border border-primary/20 bg-primary/5 space-y-3 text-left">
+          <div className="flex items-center gap-2 text-sm font-semibold text-primary">
+            <Users className="w-4 h-4" />
+            <span>Update Jumlah Hadir & Rombongan</span>
+          </div>
+          <p className="text-xs text-muted-foreground">
+            Sesuaikan jumlah tamu dalam rombongan yang hadir saat tiba di lokasi.
+          </p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+            <div>
+              <label className="block mb-1 font-medium text-foreground">Jumlah Orang Hadir</label>
+              <input
+                type="number"
+                min={1}
+                max={50}
+                value={partyCount}
+                onChange={(e) => setPartyCount(Math.max(1, Number(e.target.value)))}
+                className="w-full px-3 py-2 rounded-lg border border-input bg-background text-sm font-semibold"
+              />
+            </div>
+            <div>
+              <label className="block mb-1 font-medium text-foreground">Nama Anggota (opsional, koma)</label>
+              <input
+                type="text"
+                placeholder="cth: Budi, Ani, Cici"
+                value={attendeeNames}
+                onChange={(e) => setAttendeeNames(e.target.value)}
+                className="w-full px-3 py-2 rounded-lg border border-input bg-background text-sm"
+              />
+            </div>
+          </div>
+          <Button
+            size="sm"
+            className="w-full"
+            disabled={saving}
+            onClick={handleUpdateAttendance}
+          >
+            {saving ? "Menyimpan ke Database..." : "Simpan Perubahan Kehadiran"}
+          </Button>
+        </div>
+      )}
+
       {isCancelled ? (
-        <div className="border border-destructive/40 bg-destructive/10 rounded-xl p-4 mt-6 text-center">
+        <div className="border border-destructive/40 bg-destructive/10 rounded-xl p-4 mt-4 text-center">
           <AlertTriangle className="w-10 h-10 text-destructive mx-auto mb-2" />
           <h3 className="font-semibold text-destructive text-base">Undangan Tidak Berlaku</h3>
           <p className="text-xs text-muted-foreground mt-1">
@@ -265,18 +342,18 @@ export function CheckInPanel({
           </p>
         </div>
       ) : (
-        <div className="border border-emerald-500/30 bg-emerald-950/20 rounded-xl p-5 mt-6 text-center shadow-sm">
-          <div className="w-12 h-12 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center mx-auto mb-2.5">
-            <Check className="w-6 h-6 stroke-[3]" />
+        <div className="border border-emerald-500/30 bg-emerald-950/20 rounded-xl p-4 mt-4 text-center shadow-sm">
+          <div className="w-10 h-10 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center mx-auto mb-2">
+            <Check className="w-5 h-5 stroke-[3]" />
           </div>
-          <h3 className="font-bold text-emerald-400 text-lg">
+          <h3 className="font-bold text-emerald-400 text-base">
             ✓ Berhasil di-Scan & Terkonfirmasi
           </h3>
-          <p className="text-xs text-muted-foreground mt-1">
-            Kehadiran telah otomatis dicatat ke database.
+          <p className="text-xs text-muted-foreground mt-0.5">
+            Kehadiran ({item.checked} orang) telah tercatat di database.
           </p>
           {item.seat && (
-            <div className="inline-block mt-3 px-3 py-1 rounded-md bg-emerald-500/10 border border-emerald-500/20 text-emerald-300 text-xs font-medium">
+            <div className="inline-block mt-2.5 px-3 py-1 rounded-md bg-emerald-500/10 border border-emerald-500/20 text-emerald-300 text-xs font-medium">
               Silakan arahkan tamu menuju area duduk: <strong>{item.seat}</strong>
             </div>
           )}
@@ -287,7 +364,7 @@ export function CheckInPanel({
         <Button
           type="button"
           size="lg"
-          className="w-full mt-6 py-6 text-base font-semibold shadow-lg shadow-primary/20 flex items-center justify-center gap-2"
+          className="w-full mt-4 py-6 text-base font-semibold shadow-lg shadow-primary/20 flex items-center justify-center gap-2"
           onClick={onContinueScan}
         >
           <ScanLine className="w-5 h-5" />
@@ -323,7 +400,7 @@ export function ScannerPage({ initialCode }: { initialCode?: string }) {
     };
   }, []);
 
-  function performAutoCheckIn(item: Invitation): { result: Invitation; wasAlreadyFull: boolean } {
+  async function performAutoCheckIn(item: Invitation): Promise<{ result: Invitation; wasAlreadyFull: boolean }> {
     if (item.cancelled) {
       toast.error(`Undangan ${item.name} dibatalkan`);
       return { result: item, wasAlreadyFull: false };
@@ -340,7 +417,7 @@ export function ScannerPage({ initialCode }: { initialCode?: string }) {
             : 1
           : 1;
 
-      const success = checkIn(item.id, unpresent, countToCheckIn);
+      const success = await checkIn(item.id, unpresent, countToCheckIn);
       if (success) {
         toast.success(`Check-in berhasil: ${item.name} (${countToCheckIn} tamu)`);
         const updatedMembers = (item.members || []).map((m) =>
@@ -363,7 +440,7 @@ export function ScannerPage({ initialCode }: { initialCode?: string }) {
     }
   }
 
-  function lookup(value: string) {
+  async function lookup(value: string) {
     let normalized = "";
     try {
       normalized = decodeURIComponent(value.split("/").pop() || value)
@@ -376,7 +453,18 @@ export function ScannerPage({ initialCode }: { initialCode?: string }) {
       return;
     }
 
-    const item = data.invitations.find((i) => i.code.toUpperCase() === normalized);
+    let item = data.invitations.find((i) => i.code.toUpperCase() === normalized);
+    if (!item) {
+      // Try to check in or verify via API directly if not found in local cache
+      try {
+        const { getPublicInvitationApi } = await import("@/lib/sambut/api");
+        const res = await getPublicInvitationApi(normalized);
+        if (res.data) {
+          item = res.data;
+        }
+      } catch {}
+    }
+
     if (!item) {
       setId("");
       setAlertItem(null);
@@ -389,7 +477,7 @@ export function ScannerPage({ initialCode }: { initialCode?: string }) {
     playScanBeep();
 
     // Otomatis check-in
-    const { result: checkedItem, wasAlreadyFull } = performAutoCheckIn(item);
+    const { result: checkedItem, wasAlreadyFull } = await performAutoCheckIn(item);
 
     // Buka pop-up alert konfirmasi
     setId(item.id);
@@ -530,7 +618,7 @@ export function ScannerPage({ initialCode }: { initialCode?: string }) {
                 value={code}
                 required
                 onChange={(e) => setCode(e.target.value)}
-                placeholder="GCP-SMP-A7K2X"
+                placeholder="Contoh: K9X2B"
               />
               <Button type="submit" aria-label="Periksa kode">
                 <ArrowRight />

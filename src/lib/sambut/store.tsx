@@ -15,7 +15,7 @@ import {
   resetSimulationApi,
 } from "./api";
 
-export type Category = "SMP" | "Guru" | "VIP" | "Orang Tua/Wali";
+export type Category = "SMP" | "Guru" | "VIP" | "Orang Tua/Wali" | "Umum";
 export type Rsvp = "Pending" | "Hadir" | "Tidak Hadir";
 export type Member = { id: string; name: string; role: string; present: boolean };
 export type Invitation = {
@@ -59,7 +59,7 @@ export type Data = {
   activities: Activity[];
   messages: Message[];
 };
-export const categories: Category[] = ["SMP", "Guru", "VIP", "Orang Tua/Wali"];
+export const categories: Category[] = ["SMP", "Guru", "VIP", "Orang Tua/Wali", "Umum"];
 export const mouStatuses = [
   "Belum dijadwalkan",
   "Menunggu tanda tangan",
@@ -361,11 +361,10 @@ export function SambutProvider({ children }: { children: ReactNode }) {
     count?: number,
     attendees?: string[] | string,
   ): Promise<boolean> => {
-    const item = data.invitations.find((i) => i.id === idOrCode || i.code === idOrCode);
-    if (!item || item.cancelled) {
-      toast.error("Undangan tidak valid atau dibatalkan.");
-      return false;
-    }
+    const normalizedInput = idOrCode.trim();
+    let item = data.invitations.find(
+      (i) => i.id === normalizedInput || i.code.toUpperCase() === normalizedInput.toUpperCase(),
+    );
 
     // Parse attendee names if provided
     let attendeeNames: string[] = [];
@@ -377,8 +376,44 @@ export function SambutProvider({ children }: { children: ReactNode }) {
       }
     }
 
-    const partyCount = count ?? (attendeeNames.length > 0 ? attendeeNames.length : 1);
+    const partyCount = count ?? (attendeeNames.length > 0 ? attendeeNames.length : (item?.checked || 1));
     const effectiveCount = Math.max(partyCount, 1);
+
+    if (!item) {
+      // Fallback: try direct backend check-in API in case local invitations are not yet loaded
+      try {
+        const res = await checkInApi({
+          code: normalizedInput.toUpperCase(),
+          member_ids: memberIds,
+          count: effectiveCount,
+          attendees: attendeeNames.length > 0 ? attendeeNames : undefined,
+        });
+        if (res.data) {
+          const newItem: Invitation = {
+            ...res.data,
+            members: res.data.members || [],
+            mouDate: res.data.mouDate ?? (res.data as any).mou_date ?? "",
+            vipLevel: res.data.vipLevel ?? (res.data as any).vip_level ?? "VIP",
+          };
+          setData((d) => ({
+            ...d,
+            invitations: [newItem, ...d.invitations.filter((i) => i.id !== newItem.id && i.code !== newItem.code)],
+            activities: activity(d, `${newItem.name} · ${effectiveCount} tamu berhasil check-in`),
+          }));
+          toast.success(`Check-in berhasil: ${effectiveCount} tamu tercatat di database`);
+          return true;
+        }
+      } catch (err: any) {
+        toast.error(err?.message || "Kode tiket tidak ditemukan di database.");
+        return false;
+      }
+      return false;
+    }
+
+    if (item.cancelled) {
+      toast.error("Undangan tidak valid atau telah dibatalkan.");
+      return false;
+    }
 
     // Build local members
     let updatedMembers = [...(item.members || [])];

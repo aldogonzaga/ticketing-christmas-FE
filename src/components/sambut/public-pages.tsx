@@ -8,7 +8,6 @@ import {
   Clock3,
   Sparkles,
   Heart,
-  GraduationCap,
   Quote,
   Download,
   Printer,
@@ -24,6 +23,7 @@ import {
   CheckCircle2,
   Users,
   Check,
+  PartyPopper,
 } from "lucide-react";
 import { QRCodeSVG } from "qrcode.react";
 import { toast } from "sonner";
@@ -31,12 +31,9 @@ import { Button } from "@/components/ui/button";
 import templeImage from "@/assets/borobudur-dawn.jpg";
 import christmasGroupPhoto from "@/assets/mhs.jpeg";
 import medleyMusic from "@/assets/Medley.mp3";
-import popupImage from "@/assets/PopUp1.jpeg";
 import background2Image from "@/assets/background2.jpeg";
 import {
   useSambut,
-  blankInvitation,
-  newInvitation,
   type Invitation,
 } from "@/lib/sambut/store";
 import { eventDate, inviteURL } from "@/lib/sambut/utils";
@@ -857,6 +854,12 @@ export function GoldenTicket({
         <div className="ticket-seat">
           Seat {item.seat || "Belum ditetapkan"} · {item.quota} orang
         </div>
+        {item.note && (
+          <p className="ticket-christmas-greeting">
+            <Quote size={12} style={{ display: "inline", marginRight: "4px", verticalAlign: "middle", opacity: 0.7 }} />
+            &ldquo;{item.note}&rdquo;
+          </p>
+        )}
       </div>
       <div className="ticket-location">
         <MapPin aria-hidden="true" />
@@ -880,27 +883,52 @@ export function GoldenTicket({
       </div>
       <div className="ticket-perforation" aria-hidden="true" />
       <div className="ticket-attendance">
-        <div className="ticket-attendance-heading">
-          <span>
-            {item.category === "SMP" ? "Rombongan yang sudah masuk" : "Tamu yang sudah masuk"}
-          </span>
-          <strong>
-            {item.checked} <small>/ {item.quota}</small>
-          </strong>
-        </div>
-        <div
-          className="ticket-progress"
-          role="progressbar"
-          aria-label="Jumlah tamu yang sudah check-in"
-          aria-valuemin={0}
-          aria-valuemax={item.quota}
-          aria-valuenow={Math.min(item.checked, item.quota)}
-        >
-          <span style={{ width: `${progress}%` }} />
-        </div>
-        <strong className="ticket-remaining">
-          Sisa {Math.max(0, item.quota - item.checked)} orang dapat masuk.
-        </strong>
+        {item.checked > 0 ? (
+          <>
+            <div className="ticket-attendance-heading">
+              <span style={{ color: "#16a34a", display: "flex", alignItems: "center", gap: "0.35rem" }}>
+                <Check size={15} />
+                {item.category === "SMP" ? "Rombongan sudah hadir" : "Sudah check-in"}
+              </span>
+              <strong style={{ color: "#16a34a" }}>
+                {item.checked} <small style={{ color: "#16a34a" }}>/ {item.quota}</small>
+              </strong>
+            </div>
+            <div
+              className="ticket-progress"
+              role="progressbar"
+              aria-label="Jumlah tamu yang sudah check-in"
+              aria-valuemin={0}
+              aria-valuemax={item.quota}
+              aria-valuenow={Math.min(item.checked, item.quota)}
+            >
+              <span style={{ width: `${progress}%`, background: "#16a34a" }} />
+            </div>
+            <strong className="ticket-remaining" style={{ color: "#16a34a" }}>
+              🎄 Selamat datang! Nikmati perayaan Natal bersama.
+            </strong>
+          </>
+        ) : (
+          <>
+            <div className="ticket-attendance-heading">
+              <span>Belum check-in</span>
+              <strong style={{ color: "#9ca3af" }}>0 <small>/ {item.quota}</small></strong>
+            </div>
+            <div
+              className="ticket-progress"
+              role="progressbar"
+              aria-label="Belum check-in"
+              aria-valuemin={0}
+              aria-valuemax={item.quota}
+              aria-valuenow={0}
+            >
+              <span style={{ width: "0%" }} />
+            </div>
+            <strong className="ticket-remaining" style={{ color: "#6b7280", fontWeight: 500 }}>
+              Tunjukkan kode ini kepada panitia saat tiba di lokasi.
+            </strong>
+          </>
+        )}
       </div>
       <div className="ticket-perforation" aria-hidden="true" />
       <div className="qr-paper">
@@ -908,23 +936,62 @@ export function GoldenTicket({
       </div>
       <div className="ticket-code-row">
         <div className="ticket-code">{item.code}</div>
+        <button
+          type="button"
+          className="ticket-copy-code-btn"
+          title="Salin Kode Undangan"
+          onClick={() => {
+            copyText(item.code);
+            toast.success(`Kode tiket ${item.code} berhasil disalin!`);
+          }}
+        >
+          <Copy size={12} />
+          <span>Salin Kode</span>
+        </button>
         <RsvpBadge value={item.rsvp} />
       </div>
       <p className="ticket-note">
-        {item.category === "SMP"
-          ? "Tunjukkan barcode ini kepada petugas di pintu masuk. Satu tiket berlaku untuk seluruh rombongan."
-          : "Tunjukkan barcode ini kepada petugas saat tiba di lokasi."}
+        📸 <strong>Screenshot atau simpan kode ini ({item.code}).</strong> Tunjukkan barcode atau sebutkan kode ini kepada panitia saat tiba di lokasi untuk verifikasi kehadiran.
       </p>
     </div>
   );
 }
 
 export function TicketPage({ code, customName }: { code: string; customName?: string }) {
-  const { data, ready } = useSambut();
+  const { data, ready, checkIn } = useSambut();
   const ref = useRef<HTMLDivElement>(null);
-  const item = data.invitations.find((i) => i.code === code && !i.cancelled);
+  const [directItem, setDirectItem] = useState<Invitation | null>(null);
+
+  const localItem = data.invitations.find((i) => i.code.toUpperCase() === code.toUpperCase() && !i.cancelled);
+  const item = localItem || directItem;
+
+  useEffect(() => {
+    if (ready && !localItem) {
+      import("@/lib/sambut/api").then(({ getPublicInvitationApi }) => {
+        getPublicInvitationApi(code)
+          .then((res) => {
+            if (res.data) setDirectItem(res.data);
+          })
+          .catch(() => {});
+      });
+    }
+  }, [code, ready, localItem]);
+
   const identity = item ? ticketIdentity(item) : { name: "", institution: "", role: "" };
   const displayName = customName || identity.name || "Tamu Undangan";
+
+  // Arrival check-in panel state
+  const [partyCount, setPartyCount] = useState(() => item?.checked || 1);
+  const [attendeeNames, setAttendeeNames] = useState("");
+  const [checkInLoading, setCheckInLoading] = useState(false);
+  const [checkInDone, setCheckInDone] = useState(false);
+  const [showEditParty, setShowEditParty] = useState(false);
+
+  useEffect(() => {
+    if (item?.checked) {
+      setPartyCount(item.checked);
+    }
+  }, [item?.checked]);
 
   async function download() {
     if (!ref.current) return;
@@ -1009,6 +1076,108 @@ export function TicketPage({ code, customName }: { code: string; customName?: st
                 >
                   <Maximize />
                 </Button>
+              </div>
+              {/* ── Day-of Arrival Check-in Panel ── */}
+              <div className="ticket-checkin-panel">
+                {(item.checked > 0 || checkInDone) && !showEditParty ? (
+                  <div className="ticket-checkin-success">
+                    <div className="ticket-checkin-success-main">
+                      <PartyPopper size={30} style={{ color: "#16a34a", shrink: 0 }} />
+                      <div>
+                        <strong>Kehadiran Terkonfirmasi! 🎄</strong>
+                        <p>
+                          Tercatat <strong>{item.checked} orang</strong> hadir pada perayaan Natal.
+                        </p>
+                        {item.members && item.members.length > 0 && (
+                          <div className="ticket-member-tags">
+                            {item.members.map((m) => (
+                              <span key={m.id} className="ticket-member-tag">
+                                ✓ {m.name}
+                              </span>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setShowEditParty(true)}
+                      className="ticket-checkin-edit-btn"
+                    >
+                      Perbarui / Tambah Rombongan
+                    </Button>
+                  </div>
+                ) : (
+                  <div className="ticket-checkin-form-wrap">
+                    <div className="ticket-checkin-form-header">
+                      <Users size={20} />
+                      <div>
+                        <strong>{item.checked > 0 ? "Perbarui Rombongan Hadir" : "Hadir hari ini?"}</strong>
+                        <p>Masukkan jumlah rombongan yang hadir saat tiba di lokasi perayaan.</p>
+                      </div>
+                    </div>
+                    <div className="ticket-checkin-fields">
+                      <label>
+                        <span>Jumlah orang yang hadir</span>
+                        <input
+                          type="number"
+                          min={1}
+                          max={50}
+                          value={partyCount}
+                          onChange={(e) => setPartyCount(Math.max(1, Number(e.target.value)))}
+                          className="ticket-checkin-input"
+                        />
+                      </label>
+                      <label>
+                        <span>Nama yang hadir <small>(opsional, pisahkan koma)</small></span>
+                        <textarea
+                          rows={2}
+                          placeholder="cth: Budi, Ani, Cici"
+                          value={attendeeNames}
+                          onChange={(e) => setAttendeeNames(e.target.value)}
+                          className="ticket-checkin-textarea"
+                        />
+                      </label>
+                    </div>
+                    <div className="ticket-checkin-btn-row">
+                      <Button
+                        disabled={checkInLoading}
+                        onClick={async () => {
+                          setCheckInLoading(true);
+                          try {
+                            const names = attendeeNames
+                              .split(/[,\n]+/)
+                              .map((n) => n.trim())
+                              .filter(Boolean);
+                            const ok = await checkIn(item.code, [], partyCount, names.length ? names : undefined);
+                            if (ok) {
+                              setCheckInDone(true);
+                              setShowEditParty(false);
+                              toast.success("Check-in berhasil! Selamat merayakan Natal 🎄");
+                            } else {
+                              toast.error("Check-in gagal. Coba lagi atau hubungi panitia.");
+                            }
+                          } finally {
+                            setCheckInLoading(false);
+                          }
+                        }}
+                      >
+                        <CheckCircle2 />
+                        {checkInLoading ? "Menyimpan ke Database…" : "Konfirmasi Kehadiran"}
+                      </Button>
+                      {item.checked > 0 && (
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => setShowEditParty(false)}
+                        >
+                          Batal
+                        </Button>
+                      )}
+                    </div>
+                  </div>
+                )}
               </div>
               <div className="text-center ticket-page-footer">
                 <ArrowLink to="/">Kembali ke halaman acara</ArrowLink>
