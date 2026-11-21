@@ -2,7 +2,7 @@ import type { Invitation } from "./store";
 export const BRAND = "Christmas Celebration 2026";
 export const pageHead = (
   title: string,
-  description = "Undangan digital, Golden Ticket, dan pengelolaan kehadiran Christmas Celebration 2026.",
+  description = "Undangan digital, Ticket, dan pengelolaan kehadiran Christmas Celebration 2026.",
 ) => ({
   meta: [
     { title: title === BRAND ? title : `${title} — ${BRAND}` },

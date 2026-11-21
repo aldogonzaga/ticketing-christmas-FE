@@ -65,7 +65,7 @@ export function SchoolPortalPage({ code }: { code: string }) {
     save({ ...item, members: [...item.members, member] });
     setName("");
     setShow(member.id);
-    toast.success(`Golden Ticket untuk ${n} sudah dibuat`);
+    toast.success(`Ticket untuk ${n} sudah dibuat`);
   }
   function remove(m: Member) {
     if (!item || m.present) return void toast.error("Peserta yang sudah check-in tidak bisa dihapus.");
@@ -154,7 +154,7 @@ export function SchoolPortalPage({ code }: { code: string }) {
                     <MemberTicket item={item} member={m} />
                   ) : (
                     <Empty
-                      title="Golden Ticket muncul di sini"
+                      title="Ticket muncul di sini"
                       text="Isi nama peserta untuk membuat tiket atas namanya."
                     />
                   );
@@ -177,7 +177,7 @@ export function SchoolLinksPage() {
         <h1 className="text-2xl font-semibold">Link Pendaftaran Sekolah</h1>
         <p className="text-muted-foreground">
           Satu link untuk setiap sekolah. Sekolah mengisi pesertanya sendiri dan tiap peserta
-          mendapat Golden Ticket atas namanya.
+          mendapat Ticket atas namanya.
         </p>
       </div>
       {schools.length === 0 ? (

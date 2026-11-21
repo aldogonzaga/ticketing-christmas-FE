@@ -1013,7 +1013,7 @@ export function TicketPage({ code, customName }: { code: string; customName?: st
               <header className="ticket-page-heading">
                 <div>
                   <SectionLabel>TIKET DIGITAL · {item.category.toUpperCase()}</SectionLabel>
-                  <h1>Golden Ticket</h1>
+                  <h1>Ticket</h1>
                   <p>
                     Undangan untuk <strong>{displayName}</strong>. Tunjukkan tiket ini atau sebutkan kode kepada panitia saat tiba di lokasi.
                   </p>

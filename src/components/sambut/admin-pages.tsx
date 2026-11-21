@@ -415,7 +415,7 @@ export function SettingsPage() {
         <div>
           <div className="admin-greeting">DETAIL YANG BERARTI</div>
           <h1>Pengaturan Acara</h1>
-          <p>Siapkan informasi resmi yang akan muncul pada undangan dan Golden Ticket.</p>
+          <p>Siapkan informasi resmi yang akan muncul pada undangan dan Ticket.</p>
         </div>
       </div>
       <div className="settings-grid">
