@@ -8,7 +8,6 @@ import {
   ChevronLeft,
   ChevronRight,
   Eye,
-  QrCode,
   Trash2,
   Pencil,
   Share2,
@@ -263,7 +262,7 @@ export function InvitationsPage({ category }: { category?: Category }) {
                       <Button
                         variant="ghost"
                         size="icon"
-                        title="Lihat detail & QR"
+                        title="Lihat detail tiket"
                         aria-label={`Detail ${i.name}`}
                         onClick={() => setDetail(i.id)}
                       >

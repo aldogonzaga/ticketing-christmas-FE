@@ -2,7 +2,6 @@ import { useState, type ReactNode } from "react";
 import { Link, useRouterState, Navigate } from "@tanstack/react-router";
 import {
   LayoutDashboard,
-  ScanLine,
   ClipboardCheck,
   ChartNoAxesCombined,
   Settings,
@@ -12,6 +11,7 @@ import {
   ArrowUpRight,
   Tickets,
   Link2,
+  TicketCheck,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useSambut } from "@/lib/sambut/store";
@@ -20,7 +20,7 @@ const nav = [
   ["Ringkasan", "/admin/dashboard", LayoutDashboard],
   ["Semua Undangan", "/admin/invitations", Tickets],
   ["Link Sekolah", "/admin/school-links", Link2],
-  ["Scanner QR", "/admin/scanner", ScanLine],
+  ["Check-in Tiket", "/admin/scanner", TicketCheck],
   ["Rekap Kehadiran", "/admin/attendance", ClipboardCheck],
   ["Laporan", "/admin/reports", ChartNoAxesCombined],
   ["Pengaturan", "/admin/settings", Settings],
@@ -82,8 +82,8 @@ export function AdminLayout({ children }: { children: ReactNode }) {
           <div className="admin-header-right">
             <Button asChild size="sm" className="scan-header-button">
               <Link to="/admin/scanner">
-                <ScanLine />
-                Buka Scanner
+                <TicketCheck />
+                Check-in Tiket
               </Link>
             </Button>
             <div className="admin-user">
@@ -144,9 +144,9 @@ export function AdminLayout({ children }: { children: ReactNode }) {
           <Tickets />
           <span>Undangan</span>
         </Link>
-        <Link to="/admin/scanner" className="mobile-scan-tab" aria-label="Buka Scanner QR">
-          <ScanLine />
-          <span>Scanner</span>
+        <Link to="/admin/scanner" className="mobile-scan-tab" aria-label="Buka Check-in Tiket">
+          <TicketCheck />
+          <span>Check-in</span>
         </Link>
         <Link to="/admin/attendance" className={path === "/admin/attendance" ? "active" : ""}>
           <ClipboardCheck />

@@ -1647,6 +1647,41 @@ img {
   flex-wrap: wrap;
   gap: 10px;
 }
+.ticket-code-card {
+  margin: 16px auto;
+  max-width: 380px;
+  padding: 22px 20px;
+  background: color-mix(in oklch, var(--ticket-gold-deep) 40%, #ffffff);
+  border: 2px dashed color-mix(in oklch, var(--ticket-ink) 25%, transparent);
+  border-radius: 16px;
+  text-align: center;
+  box-shadow: 0 4px 16px color-mix(in oklch, var(--ticket-ink) 6%, transparent);
+}
+.ticket-code-label {
+  display: block;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  color: color-mix(in oklch, var(--ticket-ink) 65%, transparent);
+  margin-bottom: 6px;
+}
+.ticket-code-display {
+  font-family: monospace;
+  font-size: 38px;
+  font-weight: 800;
+  letter-spacing: 6px;
+  line-height: 1.1;
+  color: #c92a2a;
+  text-shadow: 0 2px 4px rgba(201, 42, 42, 0.15);
+  margin-bottom: 12px;
+}
+.ticket-code-actions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
 .ticket-code {
   font-family: monospace;
   font-size: 12px;

@@ -25,7 +25,6 @@ import {
   Check,
   PartyPopper,
 } from "lucide-react";
-import { QRCodeSVG } from "qrcode.react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import templeImage from "@/assets/borobudur-dawn.jpg";
@@ -430,7 +429,6 @@ function EventRegistrationForm() {
     name: "",
     category: "Orang Tua/Wali",
     affiliation: "",
-    phone: "",
     message: "",
   });
 
@@ -456,7 +454,6 @@ function EventRegistrationForm() {
         affiliation: formData.affiliation.trim(),
         category: formData.category,
         message: formData.message.trim(),
-        phone: formData.phone.trim() || undefined,
       });
 
       // Navigate to the newly generated unique code ticket page
@@ -517,17 +514,6 @@ function EventRegistrationForm() {
               placeholder="Contoh: SMP Negeri 1 Cibitung / Keluarga Bpk. Gunawan"
               value={formData.affiliation}
               onChange={(e) => setFormData({ ...formData, affiliation: e.target.value })}
-            />
-          </label>
-
-          <label className="field full">
-            <span>Nomor WhatsApp / Kontak (Opsional)</span>
-            <input
-              type="tel"
-              maxLength={30}
-              placeholder="08xxxxxxxxxx"
-              value={formData.phone}
-              onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
             />
           </label>
 
@@ -931,27 +917,27 @@ export function GoldenTicket({
         )}
       </div>
       <div className="ticket-perforation" aria-hidden="true" />
-      <div className="qr-paper">
-        <QRCodeSVG value={item.code} size={240} level="M" bgColor="transparent" />
-      </div>
-      <div className="ticket-code-row">
-        <div className="ticket-code">{item.code}</div>
-        <button
-          type="button"
-          className="ticket-copy-code-btn"
-          title="Salin Kode Undangan"
-          onClick={() => {
-            copyText(item.code);
-            toast.success(`Kode tiket ${item.code} berhasil disalin!`);
-          }}
-        >
-          <Copy size={12} />
-          <span>Salin Kode</span>
-        </button>
-        <RsvpBadge value={item.rsvp} />
+      <div className="ticket-code-card">
+        <span className="ticket-code-label">KODE TIKET RESMI</span>
+        <div className="ticket-code-display">{item.code}</div>
+        <div className="ticket-code-actions">
+          <button
+            type="button"
+            className="ticket-copy-code-btn"
+            title="Salin Kode Undangan"
+            onClick={() => {
+              copyText(item.code);
+              toast.success(`Kode tiket ${item.code} berhasil disalin!`);
+            }}
+          >
+            <Copy size={13} />
+            <span>Salin Kode Tiket</span>
+          </button>
+          <RsvpBadge value={item.rsvp} />
+        </div>
       </div>
       <p className="ticket-note">
-        📸 <strong>Screenshot atau simpan kode ini ({item.code}).</strong> Tunjukkan barcode atau sebutkan kode ini kepada panitia saat tiba di lokasi untuk verifikasi kehadiran.
+        📸 <strong>Screenshot atau simpan kode ini ({item.code}).</strong> Sebutkan kode tiket ini kepada panitia saat tiba di lokasi untuk verifikasi kehadiran.
       </p>
     </div>
   );
@@ -1029,8 +1015,7 @@ export function TicketPage({ code, customName }: { code: string; customName?: st
                   <SectionLabel>TIKET DIGITAL · {item.category.toUpperCase()}</SectionLabel>
                   <h1>Golden Ticket</h1>
                   <p>
-                    Undangan untuk <strong>{displayName}</strong>. Tunjukkan QR ini kepada panitia
-                    saat tiba di lokasi.
+                    Undangan untuk <strong>{displayName}</strong>. Tunjukkan tiket ini atau sebutkan kode kepada panitia saat tiba di lokasi.
                   </p>
                 </div>
                 <Badge tone="gold">{item.rsvp === "Tidak Hadir" ? "Tidak Hadir" : item.rsvp}</Badge>

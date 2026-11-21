@@ -1,5 +1,5 @@
-import { useEffect, useRef, useState } from "react";
-import { Camera, ScanLine, Square, Check, ArrowRight, CheckCircle2, UserCheck, AlertTriangle, X, Users, Quote } from "lucide-react";
+import { useEffect, useState } from "react";
+import { Check, ArrowRight, CheckCircle2, UserCheck, AlertTriangle, X, Users, Quote, Ticket, ClipboardCheck, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useSambut, type Invitation } from "@/lib/sambut/store";
 import { toast } from "sonner";
@@ -26,7 +26,7 @@ function playScanBeep() {
 }
 
 /**
- * Pop-up Alert Modal yang muncul di tengah layar setelah tiket di-scan
+ * Pop-up Alert Modal yang muncul di tengah layar setelah kode tiket diverifikasi
  */
 export function ScanAlertModal({
   item,
@@ -39,7 +39,6 @@ export function ScanAlertModal({
 }) {
   const isFull = item.checked >= item.quota;
   const isCancelled = item.cancelled;
-  // Denied state: cancelled OR was already full before this scan (re-scan)
   const isDenied = isCancelled || wasAlreadyFull;
 
   return (
@@ -60,7 +59,7 @@ export function ScanAlertModal({
             <DialogPrimitive.Title asChild>
               <div className="flex items-center gap-2">
                 <span className={`p-1.5 rounded-md ${isDenied ? "bg-destructive/10 text-destructive" : "bg-primary/10 text-primary"}`}>
-                  <ScanLine size={18} />
+                  <ClipboardCheck size={18} />
                 </span>
                 <span className="font-semibold text-base">
                   {isDenied ? "Kehadiran Ditolak" : "Konfirmasi Kehadiran Tamu"}
@@ -73,7 +72,6 @@ export function ScanAlertModal({
           </header>
 
           <div className="p-6 text-center">
-            {/* Animated Icon & Badge */}
             {isDenied ? (
               <div className="w-16 h-16 rounded-full bg-destructive/15 text-destructive border border-destructive/30 flex items-center justify-center mx-auto mb-3 animate-in zoom-in-75 duration-200">
                 <AlertTriangle className="w-9 h-9" />
@@ -94,7 +92,7 @@ export function ScanAlertModal({
               ) : wasAlreadyFull ? (
                 <Badge tone="danger">✗ Kuota Sudah Penuh — Ditolak</Badge>
               ) : isFull ? (
-                <Badge tone="success">✓ Berhasil di-Scan & Terkonfirmasi</Badge>
+                <Badge tone="success">✓ Tiket Terverifikasi & Hadir</Badge>
               ) : (
                 <Badge tone="gold">✓ Check-in Sebagian</Badge>
               )}
@@ -104,7 +102,7 @@ export function ScanAlertModal({
               {item.name}
             </h3>
             <p className="text-xs text-muted-foreground mt-1">
-              {item.category === "SMP" ? (item.principal ? `${item.principal} \u00b7 Kepala Sekolah` : "Kepala Sekolah") : item.institution || "Tamu Undangan"}
+              {item.category === "SMP" ? (item.principal ? `${item.principal} · Kepala Sekolah` : "Kepala Sekolah") : item.institution || "Tamu Undangan"}
             </p>
 
             {/* Grid Informasi Tamu */}
@@ -156,7 +154,6 @@ export function ScanAlertModal({
               </div>
             )}
 
-            {/* Tombol Utama: Lanjut Scan */}
             <Button
               type="button"
               size="lg"
@@ -164,8 +161,8 @@ export function ScanAlertModal({
               onClick={onContinueScan}
               autoFocus
             >
-              <ScanLine className="w-5 h-5" />
-              Lanjut Scan
+              <ClipboardCheck className="w-5 h-5" />
+              Lanjut Periksa Tiket Lain
             </Button>
           </div>
         </DialogPrimitive.Content>
@@ -200,8 +197,8 @@ export function CheckInPanel({
         <Empty title="Undangan tidak ditemukan" text="Kode tiket tidak terdaftar pada sistem database." />
         {onContinueScan && (
           <Button size="lg" className="mt-6 w-full py-6 text-base" onClick={onContinueScan}>
-            <ScanLine className="mr-2 h-5 w-5" />
-            Lanjut Scan Tiket Lain
+            <Ticket className="mr-2 h-5 w-5" />
+            Periksa Tiket Lain
           </Button>
         )}
       </div>
@@ -347,7 +344,7 @@ export function CheckInPanel({
             <Check className="w-5 h-5 stroke-[3]" />
           </div>
           <h3 className="font-bold text-emerald-400 text-base">
-            ✓ Berhasil di-Scan & Terkonfirmasi
+            ✓ Tiket Terverifikasi & Terkonfirmasi
           </h3>
           <p className="text-xs text-muted-foreground mt-0.5">
             Kehadiran ({item.checked} orang) telah tercatat di database.
@@ -367,8 +364,8 @@ export function CheckInPanel({
           className="w-full mt-4 py-6 text-base font-semibold shadow-lg shadow-primary/20 flex items-center justify-center gap-2"
           onClick={onContinueScan}
         >
-          <ScanLine className="w-5 h-5" />
-          Lanjut Scan
+          <ClipboardCheck className="w-5 h-5" />
+          Periksa Tiket Lain
         </Button>
       )}
     </div>
@@ -383,22 +380,9 @@ export function ScannerPage({ initialCode }: { initialCode?: string }) {
   );
   const [alertItem, setAlertItem] = useState<Invitation | null>(null);
   const [alertWasAlreadyFull, setAlertWasAlreadyFull] = useState(false);
-  const [active, setActive] = useState(false);
   const [history, setHistory] = useState<string[]>([]);
   const [error, setError] = useState("");
-  const [cameras, setCameras] = useState<{ id: string; label: string }[]>([]);
-  const [camera, setCamera] = useState("");
-  const scanner = useRef<import("html5-qrcode").Html5Qrcode | null>(null);
-  const mounted = useRef(true);
-
-  useEffect(() => {
-    mounted.current = true;
-    return () => {
-      mounted.current = false;
-      const current = scanner.current;
-      if (current?.isScanning) current.stop().catch(() => {});
-    };
-  }, []);
+  const [loading, setLoading] = useState(false);
 
   async function performAutoCheckIn(item: Invitation): Promise<{ result: Invitation; wasAlreadyFull: boolean }> {
     if (item.cancelled) {
@@ -409,7 +393,6 @@ export function ScannerPage({ initialCode }: { initialCode?: string }) {
     const remaining = item.quota - item.checked;
     if (remaining > 0) {
       const unpresent = (item.members || []).filter((m) => !m.present).map((m) => m.id);
-      // If SMP has unpresent registered members, check them in; otherwise check in 1 person per scan
       const countToCheckIn =
         item.category === "SMP"
           ? unpresent.length > 0
@@ -449,10 +432,16 @@ export function ScannerPage({ initialCode }: { initialCode?: string }) {
     } catch {
       setId("");
       setAlertItem(null);
-      setError("QR tidak valid. Format kode tidak dapat dibaca.");
+      setError("Format kode tiket tidak valid.");
       return;
     }
 
+    if (!normalized) {
+      setError("Silakan masukkan kode tiket.");
+      return;
+    }
+
+    setLoading(true);
     let item = data.invitations.find((i) => i.code.toUpperCase() === normalized);
     if (!item) {
       // Try to check in or verify via API directly if not found in local cache
@@ -465,11 +454,13 @@ export function ScannerPage({ initialCode }: { initialCode?: string }) {
       } catch {}
     }
 
+    setLoading(false);
+
     if (!item) {
       setId("");
       setAlertItem(null);
-      setError("QR tidak valid. Kode undangan tidak ditemukan.");
-      toast.error("QR tidak valid. Kode undangan tidak ditemukan.");
+      setError("Kode tiket tidak ditemukan di database.");
+      toast.error("Kode tiket tidak ditemukan di database.");
       return;
     }
 
@@ -486,11 +477,8 @@ export function ScannerPage({ initialCode }: { initialCode?: string }) {
     setError("");
     setCode(item.code);
     setHistory((h) =>
-      [`${item.name} · ${new Date().toLocaleTimeString("id-ID")}`, ...h].slice(0, 5),
+      [`${item.name} (${item.code}) · ${new Date().toLocaleTimeString("id-ID")}`, ...h].slice(0, 8),
     );
-
-    // Hentikan scanner kamera sementara saat pop-up alert tampil
-    if (scanner.current?.isScanning) stop();
   }
 
   useEffect(() => {
@@ -499,52 +487,16 @@ export function ScannerPage({ initialCode }: { initialCode?: string }) {
     }
   }, [initialCode, data.invitations]);
 
-  async function stop() {
-    try {
-      if (scanner.current?.isScanning) await scanner.current.stop();
-      setActive(false);
-    } catch {
-      setActive(false);
-    }
-  }
-
-  async function start() {
-    try {
-      const { Html5Qrcode } = await import("html5-qrcode");
-      const devices = await Html5Qrcode.getCameras();
-      if (!devices.length) {
-        toast.error("Kamera tidak ditemukan. Gunakan input manual.");
-        return;
-      }
-      setCameras(devices);
-      const selected = camera || devices.at(-1)?.id;
-      if (!selected) return;
-      setCamera(selected);
-      if (!scanner.current) scanner.current = new Html5Qrcode("qr-reader");
-      await scanner.current.start(
-        selected,
-        { fps: 10, qrbox: { width: 220, height: 220 } },
-        lookup,
-        () => {},
-      );
-      if (mounted.current) setActive(true);
-    } catch {
-      toast.error("Kamera tidak dapat diakses. Izinkan kamera atau gunakan kode manual.");
-    }
-  }
-
   function handleContinueScan() {
     setAlertItem(null);
     setAlertWasAlreadyFull(false);
-    setId("");
     setCode("");
     setError("");
-    start();
   }
 
   return (
     <AdminLayout>
-      {/* Pop-up Alert Modal Hasil Scan */}
+      {/* Pop-up Alert Modal Hasil Verifikasi */}
       {alertItem && (
         <ScanAlertModal item={alertItem} wasAlreadyFull={alertWasAlreadyFull} onContinueScan={handleContinueScan} />
       )}
@@ -552,11 +504,12 @@ export function ScannerPage({ initialCode }: { initialCode?: string }) {
       <div className="admin-title-row">
         <div>
           <div className="admin-greeting">SAMBUT SETIAP KEHADIRAN</div>
-          <h1>{initialCode ? "Konfirmasi Check-in" : "Scanner QR"}</h1>
-          <p>Pindai tiket dan konfirmasi kehadiran tamu secara instan melalui pop-up alert.</p>
+          <h1>{initialCode ? "Konfirmasi Check-in" : "Verifikasi Tiket Tamu"}</h1>
+          <p>Masukkan kode tiket tamu untuk memverifikasi dan mencatat kehadiran secara langsung.</p>
         </div>
-        <Badge tone={active ? "success" : "muted"}>
-          {active ? "Kamera Aktif" : "Kamera Siap"}
+        <Badge tone="success">
+          <Sparkles className="w-3.5 h-3.5 mr-1" />
+          Sistem Presensi Aktif
         </Badge>
       </div>
 
@@ -564,89 +517,69 @@ export function ScannerPage({ initialCode }: { initialCode?: string }) {
         <section className="admin-panel">
           <div className="panel-header">
             <div>
-              <h2>Pemindai Tiket</h2>
-              <p>Satu pemindaian, satu konfirmasi kehadiran</p>
+              <h2>Verifikasi Kode Tiket</h2>
+              <p>Ketik 5 karakter unik tiket lalu tekan Enter atau Verifikasi</p>
             </div>
-            <ScanLine size={18} className="text-primary" />
+            <Ticket size={20} className="text-primary" />
           </div>
 
-          <div className="camera-area">
-            <div id="qr-reader" className="w-full" />
-            {!active && (
-              <div className="camera-empty absolute">
-                <ScanLine />
-                <p>Siap menyambut tamu berikutnya</p>
-              </div>
-            )}
-          </div>
-
-          {cameras.length > 1 && (
-            <label className="field mx-5 mb-4">
-              <span>Pilih kamera</span>
-              <select disabled={active} value={camera} onChange={(e) => setCamera(e.target.value)}>
-                {cameras.map((c) => (
-                  <option value={c.id} key={c.id}>
-                    {c.label || c.id}
-                  </option>
-                ))}
-              </select>
-            </label>
-          )}
-
-          <div className="camera-actions">
-            <Button disabled={active} onClick={start}>
-              <Camera />
-              Mulai Scanner
-            </Button>
-            <Button variant="outline" disabled={!active} onClick={stop}>
-              <Square />
-              Hentikan
-            </Button>
-          </div>
-
-          <div className="manual-scan">
-            <h3>Atau masukkan kode secara manual</h3>
+          <div className="manual-scan" style={{ marginTop: "12px", border: "none", padding: "0" }}>
             <form
               onSubmit={(e) => {
                 e.preventDefault();
                 lookup(code);
               }}
+              className="flex flex-col gap-3"
             >
-              <input
-                aria-label="Kode scan manual"
-                className="control"
-                value={code}
-                required
-                onChange={(e) => setCode(e.target.value)}
-                placeholder="Contoh: K9X2B"
-              />
-              <Button type="submit" aria-label="Periksa kode">
-                <ArrowRight />
+              <div className="relative">
+                <input
+                  aria-label="Kode tiket manual"
+                  className="control font-mono uppercase tracking-widest text-lg font-bold w-full py-4 px-4 text-center"
+                  value={code}
+                  required
+                  maxLength={10}
+                  autoFocus
+                  onChange={(e) => {
+                    setCode(e.target.value.toUpperCase());
+                    if (error) setError("");
+                  }}
+                  placeholder="CONTOH: K9X2B"
+                />
+              </div>
+              <Button type="submit" size="lg" className="w-full py-6 text-base font-semibold" disabled={loading}>
+                {loading ? "Memeriksa Database..." : (
+                  <>
+                    <ClipboardCheck className="mr-2 h-5 w-5" />
+                    Verifikasi & Check-in
+                  </>
+                )}
               </Button>
             </form>
-            {error && <p className="text-destructive text-xs mt-3">{error}</p>}
-            <p className="field-note mt-3">Ketik kode undangan lalu tekan Enter</p>
+            {error && <p className="text-destructive text-sm mt-3 font-medium text-center">{error}</p>}
           </div>
 
           {history.length > 0 && (
-            <div className="panel-content">
-              <h3 className="text-xs mb-3 font-semibold uppercase tracking-wider text-muted-foreground">
-                Pemindaian Terakhir
+            <div className="panel-content mt-6 pt-5 border-t border-border/70">
+              <h3 className="text-xs mb-3 font-semibold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
+                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500" />
+                Verifikasi Terakhir
               </h3>
-              {history.map((h, i) => (
-                <p className="field-note mb-2 text-foreground/80 font-mono text-xs" key={i}>
-                  ✓ {h}
-                </p>
-              ))}
+              <div className="space-y-1.5">
+                {history.map((h, i) => (
+                  <div className="p-2 rounded-lg bg-muted/40 text-foreground/90 font-mono text-xs flex items-center justify-between" key={i}>
+                    <span>✓ {h}</span>
+                  </div>
+                ))}
+              </div>
             </div>
           )}
         </section>
 
         <section className="admin-panel">
           <div className="panel-header">
-            <h2>Konfirmasi Kehadiran</h2>
+            <h2>Detail Tamu & Kehadiran</h2>
             <Badge tone={id ? "success" : "muted"}>
-              {id ? "Terkonfirmasi" : "Menunggu scan"}
+              {id ? "Terkonfirmasi" : "Menunggu input kode"}
             </Badge>
           </div>
 
@@ -655,7 +588,7 @@ export function ScannerPage({ initialCode }: { initialCode?: string }) {
           ) : (
             <Empty
               title="Tiket siapa yang kita sambut?"
-              text="Pindai QR barcode atau masukkan kode tiket untuk konfirmasi kehadiran instan."
+              text="Masukkan kode tiket 5 karakter di sebelah kiri untuk menampilkan detail tamu dan memverifikasi kehadiran."
             />
           )}
         </section>

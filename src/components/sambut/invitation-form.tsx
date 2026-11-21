@@ -195,7 +195,7 @@ export function InvitationForm({
         </div>
         {form.category === "SMP" && (
           <p className="field-note mt-4">
-            Satu sekolah menggunakan satu QR. Kuota mencakup seluruh siswa dan guru/pendamping.
+            Satu sekolah menggunakan satu kode tiket. Kuota mencakup seluruh siswa dan guru/pendamping.
           </p>
         )}
         <div className="form-actions">
