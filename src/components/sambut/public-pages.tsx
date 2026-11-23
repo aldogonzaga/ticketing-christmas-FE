@@ -3,6 +3,7 @@ import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
 import {
   ArrowRight,
   ArrowUpRight,
+  ArrowDown,
   CalendarDays,
   MapPin,
   Clock3,
@@ -112,10 +113,28 @@ export function HomePage() {
   const { data, ready } = useSambut();
   const navigate = useNavigate();
   const searchStr = useRouterState({ select: (state) => state.location.searchStr });
-  const invitationCode = new URLSearchParams(searchStr).get("undangan");
+  const searchParams = new URLSearchParams(searchStr);
+  const invitationCode = searchParams.get("undangan");
+  const forceHome = searchParams.get("home") === "1" || searchParams.get("beranda") === "1";
+  const [savedTicketCode, setSavedTicketCode] = useState<string | null>(null);
+
   const invitation = invitationCode
     ? data.invitations.find((item) => item.code === invitationCode && !item.cancelled)
     : undefined;
+
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem("sambut_my_ticket");
+      if (saved) {
+        setSavedTicketCode(saved);
+        // Jika user membuka kembali link website tanpa parameter ?home=1 dan tanpa ?undangan=...,
+        // arahkan langsung ke halaman kode tiket unik miliknya
+        if (!forceHome && !invitationCode) {
+          navigate({ to: "/ticket/$code", params: { code: saved } });
+        }
+      }
+    } catch {}
+  }, [forceHome, invitationCode, navigate]);
 
   const revealRoot = useRef<HTMLElement>(null);
   const musicRef = useRef<HTMLAudioElement>(null);
@@ -167,6 +186,16 @@ export function HomePage() {
   return (
     <PublicLayout>
       <main className="public-home" ref={revealRoot}>
+        {savedTicketCode && (
+          <div className="registered-ticket-banner">
+            <div className="page-width banner-inner">
+              <span>🎟️ Anda sudah memiliki tiket undangan dengan kode <strong>{savedTicketCode}</strong>.</span>
+              <Link to="/ticket/$code" params={{ code: savedTicketCode }} className="banner-action">
+                Buka Tiket Saya <ArrowRight size={14} />
+              </Link>
+            </div>
+          </div>
+        )}
         <section className="event-hero">
           <img
             className="hero-image"
@@ -205,10 +234,16 @@ export function HomePage() {
                 <p className="field-note" role="status">
                   Memuat undangan…
                 </p>
+              ) : savedTicketCode ? (
+                <Button className="text-black" asChild size="lg">
+                  <Link to="/ticket/$code" params={{ code: savedTicketCode }}>
+                    Buka Tiket Undangan <ArrowUpRight />
+                  </Link>
+                </Button>
               ) : (
                 <Button asChild size="lg">
-                  <a className="klaim" href="https://docs.google.com/spreadsheets/d/188BaLCK3JFolGqXpn41LIqDKH4KsYSPELjLyz0XcEns/edit?usp=sharing">
-                    Buka Tiket Undangan <ArrowUpRight />
+                  <a className="klaim" href="#ambil-tiket">
+                    Buka Tiket Undangan <ArrowDown />
                   </a>
                 </Button>
               )}
@@ -395,7 +430,7 @@ export function HomePage() {
         </section>
 
         {!invitationCode && (
-          <section className="registration-section" id="Klaim Tiket">
+          <section className="registration-section" id="ambil-tiket">
             <div className="page-width">
               <EventRegistrationForm />
             </div>
@@ -455,6 +490,11 @@ function EventRegistrationForm() {
         category: formData.category,
         message: formData.message.trim(),
       });
+
+      // Simpan kode tiket di localStorage agar saat membuka link kembali langsung diarahkan ke tiket
+      try {
+        localStorage.setItem("sambut_my_ticket", invitation.code);
+      } catch {}
 
       // Navigate to the newly generated unique code ticket page
       await navigate({ to: "/ticket/$code", params: { code: invitation.code } });
@@ -966,8 +1006,17 @@ export function TicketPage({ code, customName }: { code: string; customName?: st
   const identity = item ? ticketIdentity(item) : { name: "", institution: "", role: "" };
   const displayName = customName || identity.name || "Tamu Undangan";
 
-  // Arrival check-in panel state
-  const [partyCount, setPartyCount] = useState(() => item?.checked || 1);
+  // Simpan kode tiket di localStorage agar saat buka link kembali langsung diarahkan ke tiket
+  useEffect(() => {
+    if (code) {
+      try {
+        localStorage.setItem("sambut_my_ticket", code.toUpperCase());
+      } catch {}
+    }
+  }, [code]);
+
+  // Arrival check-in panel state (Maksimal 3 orang)
+  const [partyCount, setPartyCount] = useState(() => Math.min(3, Math.max(1, item?.checked || 1)));
   const [attendeeNames, setAttendeeNames] = useState("");
   const [checkInLoading, setCheckInLoading] = useState(false);
   const [checkInDone, setCheckInDone] = useState(false);
@@ -975,7 +1024,7 @@ export function TicketPage({ code, customName }: { code: string; customName?: st
 
   useEffect(() => {
     if (item?.checked) {
-      setPartyCount(item.checked);
+      setPartyCount(Math.min(3, Math.max(1, item.checked)));
     }
   }, [item?.checked]);
 
@@ -1103,17 +1152,22 @@ export function TicketPage({ code, customName }: { code: string; customName?: st
                       </div>
                     </div>
                     <div className="ticket-checkin-fields">
-                      <label>
-                        <span>Jumlah orang yang hadir</span>
-                        <input
-                          type="number"
-                          min={1}
-                          max={50}
-                          value={partyCount}
-                          onChange={(e) => setPartyCount(Math.max(1, Number(e.target.value)))}
-                          className="ticket-checkin-input"
-                        />
-                      </label>
+                      <div className="ticket-party-selector-group">
+                        <span className="field-label">Jumlah orang yang hadir (Maksimal 3 orang)</span>
+                        <div className="ticket-party-options">
+                          {[1, 2, 3].map((num) => (
+                            <button
+                              key={num}
+                              type="button"
+                              className={`ticket-party-btn ${partyCount === num ? "is-selected" : ""}`}
+                              onClick={() => setPartyCount(num)}
+                            >
+                              <span className="party-num">{num}</span>
+                              <span className="party-label">Orang</span>
+                            </button>
+                          ))}
+                        </div>
+                      </div>
                       <label>
                         <span>Nama yang hadir <small>(opsional, pisahkan koma)</small></span>
                         <textarea
@@ -1165,7 +1219,7 @@ export function TicketPage({ code, customName }: { code: string; customName?: st
                 )}
               </div>
               <div className="text-center ticket-page-footer">
-                <ArrowLink to="/">Kembali ke halaman acara</ArrowLink>
+                <ArrowLink to="/" search={{ home: "1" }}>Kembali ke halaman acara</ArrowLink>
               </div>
             </div>
           </section>

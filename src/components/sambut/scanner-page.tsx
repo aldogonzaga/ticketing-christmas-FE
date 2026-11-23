@@ -181,13 +181,13 @@ export function CheckInPanel({
   const { data, checkIn } = useSambut();
   const item = data.invitations.find((i) => i.id === id);
 
-  const [partyCount, setPartyCount] = useState<number>(() => item?.checked || 1);
+  const [partyCount, setPartyCount] = useState<number>(() => Math.min(3, Math.max(1, item?.checked || 1)));
   const [attendeeNames, setAttendeeNames] = useState<string>("");
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
     if (item) {
-      setPartyCount(item.checked || 1);
+      setPartyCount(Math.min(3, Math.max(1, item.checked || 1)));
     }
   }, [item?.id, item?.checked]);
 
@@ -298,15 +298,23 @@ export function CheckInPanel({
           </p>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
             <div>
-              <label className="block mb-1 font-medium text-foreground">Jumlah Orang Hadir</label>
-              <input
-                type="number"
-                min={1}
-                max={50}
-                value={partyCount}
-                onChange={(e) => setPartyCount(Math.max(1, Number(e.target.value)))}
-                className="w-full px-3 py-2 rounded-lg border border-input bg-background text-sm font-semibold"
-              />
+              <label className="block mb-1 font-medium text-foreground">Jumlah Orang Hadir (Maks. 3)</label>
+              <div className="grid grid-cols-3 gap-2">
+                {[1, 2, 3].map((num) => (
+                  <button
+                    key={num}
+                    type="button"
+                    onClick={() => setPartyCount(num)}
+                    className={`py-1.5 px-3 rounded-lg border text-xs font-semibold transition-all ${
+                      partyCount === num
+                        ? "bg-primary text-primary-foreground border-primary shadow-sm"
+                        : "bg-background text-foreground border-input hover:bg-muted"
+                    }`}
+                  >
+                    {num} Orang
+                  </button>
+                ))}
+              </div>
             </div>
             <div>
               <label className="block mb-1 font-medium text-foreground">Nama Anggota (opsional, koma)</label>

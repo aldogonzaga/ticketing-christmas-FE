@@ -1,5 +1,5 @@
 import { Link, useRouterState } from "@tanstack/react-router";
-import { useState, type ReactNode } from "react";
+import { useState, useEffect, type ReactNode } from "react";
 import { ArrowUpRight, Menu, X, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Brand } from "./shared";
@@ -13,6 +13,15 @@ import {
 export function PublicLayout({ children }: { children: ReactNode }) {
   const { data, ready } = useSambut();
   const [open, setOpen] = useState(false);
+  const [savedTicketCode, setSavedTicketCode] = useState<string | null>(null);
+
+  useEffect(() => {
+    try {
+      const code = localStorage.getItem("sambut_my_ticket");
+      if (code) setSavedTicketCode(code);
+    } catch {}
+  }, []);
+
   const path = useRouterState({ select: (s) => s.location.pathname });
   const nav = [
     ["Acara", "/"],
@@ -61,9 +70,19 @@ export function PublicLayout({ children }: { children: ReactNode }) {
               <p className="field-note" role="status">
                 Memuat undangan…
               </p>
+            ) : savedTicketCode ? (
+              <Button asChild className="nav-rsvp" variant="outline">
+                <Link to="/ticket/$code" params={{ code: savedTicketCode }}>
+                  Tiket Saya <ArrowUpRight />
+                </Link>
+              </Button>
+            ) : path === "/" ? (
+              <Button asChild className="nav-rsvp" variant="outline">
+                <a href="#ambil-tiket">Daftar Tiket</a>
+              </Button>
             ) : (
               <Button asChild className="nav-rsvp" variant="outline">
-                <Link to="https://docs.google.com/spreadsheets/d/188BaLCK3JFolGqXpn41LIqDKH4KsYSPELjLyz0XcEns/edit?usp=sharing">Cek Undangan</Link>
+                <Link to="/" search={{ home: "1" }} hash="ambil-tiket">Daftar Tiket</Link>
               </Button>
             )}
 

@@ -1922,6 +1922,94 @@ img {
   border-color: #16a34a;
   background: #ffffff;
 }
+.ticket-party-selector-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.ticket-party-selector-group .field-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #334155;
+}
+.ticket-party-options {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+.ticket-party-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 10px;
+  border-radius: 8px;
+  border: 1.5px solid #cbd5e1;
+  background: #f8fafc;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  user-select: none;
+}
+.ticket-party-btn:hover {
+  border-color: #94a3b8;
+  background: #f1f5f9;
+}
+.ticket-party-btn.is-selected {
+  border-color: #16a34a;
+  background: #f0fdf4;
+  box-shadow: 0 0 0 1px #16a34a;
+}
+.ticket-party-btn .party-num {
+  font-size: 16px;
+  font-weight: 700;
+  color: #0f172a;
+  line-height: 1.2;
+}
+.ticket-party-btn.is-selected .party-num {
+  color: #15803d;
+}
+.ticket-party-btn .party-label {
+  font-size: 11px;
+  color: #64748b;
+  font-weight: 500;
+}
+.ticket-party-btn.is-selected .party-label {
+  color: #16a34a;
+  font-weight: 600;
+}
+.registered-ticket-banner {
+  background: linear-gradient(90deg, #166534 0%, #15803d 100%);
+  color: #ffffff;
+  padding: 10px 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+  position: relative;
+  z-index: 30;
+}
+.registered-ticket-banner .banner-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
+  font-size: 13px;
+}
+.registered-ticket-banner .banner-action {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: #ffffff;
+  color: #166534;
+  font-weight: 600;
+  font-size: 12px;
+  padding: 5px 12px;
+  border-radius: 9999px;
+  text-decoration: none;
+  transition: opacity 0.15s, transform 0.15s;
+}
+.registered-ticket-banner .banner-action:hover {
+  opacity: 0.95;
+  transform: translateX(2px);
+}
 .ticket-checkin-btn-row {
   display: flex;
   align-items: center;
