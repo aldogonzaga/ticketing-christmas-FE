@@ -3942,6 +3942,7 @@ img {
     border: 0;
   }
   .ticket-page-heading,
+  .ticket-checkin-panel,
   .ticket-page-footer {
     display: none;
   }

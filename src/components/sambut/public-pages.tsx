@@ -1066,49 +1066,8 @@ export function TicketPage({ code, customName }: { code: string; customName?: st
                 </div>
                 <Badge tone="gold">{item.rsvp === "Tidak Hadir" ? "Tidak Hadir" : item.rsvp}</Badge>
               </header>
-              <div className="ticket-page-card" ref={ref}>
-                <GoldenTicket item={item} customName={displayName} />
-              </div>
-              <div className="ticket-actions">
-                <Button onClick={download}>
-                  <Download />
-                  Unduh PNG
-                </Button>
-                <Button variant="outline" onClick={() => window.print()}>
-                  <Printer />
-                  Cetak / PDF
-                </Button>
-                <Button variant="outline" onClick={() => copyText(inviteURL(code))}>
-                  <Copy />
-                  Salin Tautan
-                </Button>
-                <Button
-                  variant="outline"
-                  onClick={() =>
-                    window.open(
-                      `https://wa.me/?text=${encodeURIComponent(`Salam Sejahtera & Selamat Natal! Anda diundang ke ${data.settings.name}. Buka tiket undangan Anda di: ${inviteURL(code)}`)}`,
-                      "_blank",
-                      "noopener,noreferrer",
-                    )
-                  }
-                >
-                  <Share2 />
-                  Bagikan
-                </Button>
-                <Button
-                  variant="outline"
-                  aria-label="Layar penuh tiket"
-                  title="Layar penuh tiket"
-                  onClick={() =>
-                    ref.current
-                      ?.requestFullscreen?.()
-                      .catch(() => toast.error("Layar penuh tidak tersedia"))
-                  }
-                >
-                  <Maximize />
-                </Button>
-              </div>
-              {/* ── Day-of Arrival Check-in Panel ── */}
+
+              {/* ── Day-of Arrival Check-in Panel (Diatas Tiket) ── */}
               <div className="ticket-checkin-panel">
                 {(item.checked > 0 || checkInDone) && !showEditParty ? (
                   <div className="ticket-checkin-success">
@@ -1215,6 +1174,51 @@ export function TicketPage({ code, customName }: { code: string; customName?: st
                   </div>
                 )}
               </div>
+
+              <div className="ticket-page-card" ref={ref}>
+                <GoldenTicket item={item} customName={displayName} />
+              </div>
+
+              <div className="ticket-actions">
+                <Button onClick={download}>
+                  <Download />
+                  Unduh PNG
+                </Button>
+                <Button variant="outline" onClick={() => window.print()}>
+                  <Printer />
+                  Cetak / PDF
+                </Button>
+                <Button variant="outline" onClick={() => copyText(inviteURL(code))}>
+                  <Copy />
+                  Salin Tautan
+                </Button>
+                <Button
+                  variant="outline"
+                  onClick={() =>
+                    window.open(
+                      `https://wa.me/?text=${encodeURIComponent(`Salam Sejahtera & Selamat Natal! Anda diundang ke ${data.settings.name}. Buka tiket undangan Anda di: ${inviteURL(code)}`)}`,
+                      "_blank",
+                      "noopener,noreferrer",
+                    )
+                  }
+                >
+                  <Share2 />
+                  Bagikan
+                </Button>
+                <Button
+                  variant="outline"
+                  aria-label="Layar penuh tiket"
+                  title="Layar penuh tiket"
+                  onClick={() =>
+                    ref.current
+                      ?.requestFullscreen?.()
+                      .catch(() => toast.error("Layar penuh tidak tersedia"))
+                  }
+                >
+                  <Maximize />
+                </Button>
+              </div>
+
               <div className="text-center ticket-page-footer">
                 <ArrowLink to="/" search={{ home: "1" }}>Kembali ke halaman acara</ArrowLink>
               </div>
