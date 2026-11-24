@@ -478,9 +478,6 @@ export function HomePage() {
                 </article>
               ))}
             </div>
-            <p className="field-note mt-7 text-white" data-reveal>
-              *Rancangan jadwal simulasi. Waktu resmi akan diumumkan panitia.
-            </p>
           </div>
         </section>
 
@@ -740,10 +737,6 @@ export function SchedulePage() {
           Dari sambutan hangat hingga langkah kolaborasi. Setiap bagian dirangkai untuk menghadirkan
           pengalaman yang berkesan.
         </p>
-        <div className="subtle-notice">
-          Rancangan jadwal simulasi — tanggal, waktu, dan susunan acara resmi menunggu konfirmasi
-          panitia.
-        </div>
         <div className="timeline">
           {schedule.map(([time, title, text], i) => (
             <div className="timeline-row" key={title + i}>
