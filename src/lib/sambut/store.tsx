@@ -351,6 +351,7 @@ export function SambutProvider({ children }: { children: ReactNode }) {
       toast.success("Undangan berhasil dihapus");
     } catch (e: any) {
       console.error(e);
+      await loadData();
       toast.error(e.message || "Gagal menghapus dari server backend.");
     }
   };

@@ -15,6 +15,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { useSambut, stats, categories, type Settings } from "@/lib/sambut/store";
+import { loginApi } from "@/lib/sambut/api";
 import { exportData, eventDate } from "@/lib/sambut/utils";
 import templeImage from "@/assets/borobudur-dawn.jpg";
 import { AdminLayout } from "./admin-layout";
@@ -30,14 +31,19 @@ export function LoginPage() {
   async function submit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const f = new FormData(e.currentTarget);
+    const username = String(f.get("username") || "");
+    const password = String(f.get("password") || "");
     if (
-      f.get("username") !== "admin" ||
-      (f.get("password") !== "Natal2026" && f.get("password") !== "GenZ2026")
+      username !== "admin" ||
+      (password !== "Natal2026" && password !== "GenZ2026")
     ) {
       setError("Username atau password demo tidak sesuai.");
       return;
     }
     setLoading(true);
+    try {
+      await loginApi(username, password);
+    } catch {}
     login();
     await navigate({ to: "/admin/dashboard" });
   }

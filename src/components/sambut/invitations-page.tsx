@@ -382,7 +382,6 @@ export function InvitationsPage({ category }: { category?: Category }) {
                 remove(deleting.id);
                 setDeleting(null);
                 setPage(1);
-                toast.success("Undangan dihapus");
               }}
             >
               <Trash2 />
