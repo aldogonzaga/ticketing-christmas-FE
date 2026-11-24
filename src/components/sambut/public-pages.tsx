@@ -41,10 +41,66 @@ import { PublicLayout } from "./public-layout";
 import { SectionLabel, ArrowLink, Brand, Badge, RsvpBadge, Empty, copyText } from "./shared";
 
 export const schedule = [
-  ["09.00 – 10.00", "Sapaan & Registrasi", "Penyambutan tamu undangan, pembagian booklet acara, dan foto bersama."],
-  ["10.00 – 10.45", "Pujian Natal (Praise)", "Lagu-lagu pujian Natal penuh sukacita dan pembukaan ibadah."],
-  ["10.45 – 11.30", "Renungan & Doa Natal", "Pesan Natal pembawa damai, penyalaan lilin, dan doa berkat."],
-  ["11.30 – 12.30", "Perayaan & Ramah Tamah", "Persembahan spesial, pembagian bingkisan kasih, dan santap siang bersama."],
+  [
+    "(25 Menit)",
+    "Sapaan Pembuka",
+    "Keterangan: WL",
+  ],
+  [
+    "Praise",
+    'Pujian Praise: "Hai Dunia Gembiralah"',
+    "Keterangan: WL",
+  ],
+  [
+    "Doa",
+    "Doa Pembuka",
+    "Keterangan: Theresia",
+  ],
+  [
+    "Worship",
+    "Pujian Worship",
+    "a. Hai Mari Berhimpun Medley\nb. Dari Pulau Dan Benua\n(Keterangan: WL)",
+  ],
+  [
+    "Doa",
+    "Doa Syafaat",
+    "Keterangan: Ibu Megawati",
+  ],
+  [
+    "Pujian",
+    'Pujian Firman Tuhan: "FirmanMu Pelita Bagi Kakiku"',
+    "Keterangan: WL",
+  ],
+  [
+    "(30 Menit)",
+    "Firman Tuhan",
+    "Keterangan: Bapak Yohannis",
+  ],
+  [
+    "Respon",
+    'Pujian Respon Firman: "Dia Lahir Untuk Kami"',
+    "Keterangan: WL",
+  ],
+  [
+    "Sambutan",
+    "Pengumuman / Kata Sambutan",
+    "Keterangan: Bapak Darmawan",
+  ],
+  [
+    "Acara Natal",
+    "Acara Natal",
+    "- Film Natal\n- Doorprize sesi-1 (2 buah)\n- Dance\n- Doorprize sesi-2 (1 Buah)\n- Persembahan Pujian dari kelas 10\n- Doorprize sesi-3/terakhir (2 buah)",
+  ],
+  [
+    "(5 Menit)",
+    'Pujian Ending: "Hai Siarkan di Gunung"',
+    "Keterangan: WL",
+  ],
+  [
+    "Berkat",
+    "Doa Penutup dan Doa Berkat",
+    "Keterangan: Bapak Yohannis",
+  ],
 ];
 
 // URL Google Calendar dengan Waktu Acara
@@ -408,14 +464,16 @@ export function HomePage() {
             </div>
             <div className="schedule-preview text-white">
               {schedule.map(([time, title, text], index) => (
-                <article className="schedule-step text-white" key={title} data-reveal>
-                  <time className="text-white font-semibold drop-shadow">{time} WIB</time>
+                <article className="schedule-step text-white" key={title + index} data-reveal>
+                  <time className="text-white font-semibold drop-shadow">
+                    {time.includes(":") ? `${time} WIB` : time}
+                  </time>
                   <div className="schedule-marker" aria-hidden="true">
                     {String(index + 1).padStart(2, "0")}
                   </div>
                   <div className="schedule-copy text-white">
                     <h3 className="text-white font-bold text-xl drop-shadow">{title}</h3>
-                    <p className="text-white font-normal drop-shadow-sm">{text}</p>
+                    <p className="text-white font-normal drop-shadow-sm whitespace-pre-line">{text}</p>
                   </div>
                 </article>
               ))}
@@ -688,16 +746,20 @@ export function SchedulePage() {
         </div>
         <div className="timeline">
           {schedule.map(([time, title, text], i) => (
-            <div className="timeline-row" key={title}>
+            <div className="timeline-row" key={title + i}>
               <time>
                 {time}
-                <br />
-                <small>WIB</small>
+                {time.includes(":") && (
+                  <>
+                    <br />
+                    <small>WIB</small>
+                  </>
+                )}
               </time>
               <div>
-                <SectionLabel>0{i + 1}</SectionLabel>
+                <SectionLabel>{String(i + 1).padStart(2, "0")}</SectionLabel>
                 <h3 className="mt-3">{title}</h3>
-                <p>{text}</p>
+                <p className="whitespace-pre-line">{text}</p>
               </div>
             </div>
           ))}
