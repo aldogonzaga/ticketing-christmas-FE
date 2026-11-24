@@ -273,7 +273,7 @@ export function HomePage() {
                   >
                     {data.settings.date
                       ? "Simpan tanggal istimewanya"
-                      : "25 Desember 2026"}{" "}
+                      : "12 Desember 2026"}{" "}
                     <CalendarPlus size={14} />
                   </a>
                 </div>
@@ -893,7 +893,7 @@ export function GoldenTicket({
           <strong>
             {data.settings.date
               ? eventDate(data.settings.date)
-              : "Jumat, 25 Desember 2026 pukul 09.00 - 12.30 WIB"}
+              : "Sabtu, 12 Desember 2026 pukul 09.00 - 12.30 WIB"}
           </strong>
           <span>LOCATION · {data.settings.location || "Segera diumumkan"}</span>
           {data.settings.location && (

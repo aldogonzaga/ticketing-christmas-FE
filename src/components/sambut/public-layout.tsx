@@ -29,7 +29,7 @@ export function PublicLayout({ children }: { children: ReactNode }) {
   ] as const;
 
   // Nomor cadangan langsung jika data.settings.contact kosong
-  const fallbackContact = "+62812-8866-6916";
+  const fallbackContact = "+62812-9253-9590";
   const contactNumber = data?.settings?.contact || fallbackContact;
   const formattedWaNumber = contactNumber.replace(/^0/, "62").replace(/\D/g, "");
   const searchStr = useRouterState({ select: (state) => state.location.searchStr });
