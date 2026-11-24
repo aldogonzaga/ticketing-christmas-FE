@@ -395,37 +395,34 @@ export function HomePage() {
         >
           <div className="absolute inset-0 bg-gradient-to-r from-red-950/80 via-red-900/70 to-emerald-950/80 backdrop-blur-[1px]" />
 
-          <div className="page-width relative z-10">
+          <div className="page-width relative z-10 text-white">
             <div className="section-top">
               <div data-reveal>
-                <SectionLabel>RANGKAIAN MOMEN</SectionLabel>
+                <div className="eyebrow text-white">
+                  <span className="bg-white" />
+                  RANGKAIAN MOMEN
+                </div>
                 <h2 className="display-heading text-white">Setiap momen, punya cerita.</h2>
               </div>
               <ArrowLink to="/event/schedule">Lihat jadwal lengkap</ArrowLink>
             </div>
-            <div className="schedule-preview">
+            <div className="schedule-preview text-white">
               {schedule.map(([time, title, text], index) => (
-                <article className="schedule-step" key={title} data-reveal>
+                <article className="schedule-step text-white" key={title} data-reveal>
                   <time className="text-white font-semibold drop-shadow">{time} WIB</time>
                   <div className="schedule-marker" aria-hidden="true">
                     {String(index + 1).padStart(2, "0")}
                   </div>
-                  <div className="schedule-copy">
+                  <div className="schedule-copy text-white">
                     <h3 className="text-white font-bold text-xl drop-shadow">{title}</h3>
-                    <p className="text-gray-100 font-normal drop-shadow-sm">{text}</p>
+                    <p className="text-white font-normal drop-shadow-sm">{text}</p>
                   </div>
                 </article>
               ))}
             </div>
-            <p className="field-note mt-7 text-gray-200" data-reveal>
+            <p className="field-note mt-7 text-white" data-reveal>
               *Rancangan jadwal simulasi. Waktu resmi akan diumumkan panitia.
             </p>
-          </div>
-        </section>
-
-        <section className="messages-section py-12" id="kesan-pesan">
-          <div className="page-width">
-            <MessagesSectionContent />
           </div>
         </section>
 
@@ -442,12 +439,12 @@ export function HomePage() {
             <div className="curtain-panel curtain-panel-left" />
             <div className="curtain-panel curtain-panel-right" />
             <div className="curtain-centerpiece">
-              <span className="brand-mark">
-                <Sparkles strokeWidth={1.4} />
+              <span className="brand-mark text-white border-white">
+                <Sparkles strokeWidth={1.4} className="text-white" />
               </span>
-              <span>SELAMAT DATANG</span>
-              <strong>{data.settings.name}</strong>
-              <small>Christmas Celebration · 2026</small>
+              <span className="text-white">SELAMAT DATANG</span>
+              <strong className="text-white drop-shadow-md">{data.settings.name}</strong>
+              <small className="text-white">Christmas Celebration · 2026</small>
             </div>
           </div>
         )}
