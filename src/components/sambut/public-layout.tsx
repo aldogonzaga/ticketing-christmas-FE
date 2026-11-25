@@ -80,17 +80,18 @@ export function PublicLayout({ children }: { children: ReactNode }) {
                 Memuat undangan…
               </p>
             ) : path.startsWith("/ticket") ? (
-              <Button
-                className="nav-rsvp"
-                variant="outline"
-                onClick={() => {
-                  try {
-                    sessionStorage.setItem("sambut_exit_ticket", "true");
-                  } catch {}
-                  navigate({ to: "/", search: { home: "1" } });
-                }}
-              >
-                Beranda Acara <ArrowUpRight />
+              <Button asChild className="nav-rsvp" variant="outline">
+                <Link
+                  to="/"
+                  search={{ home: "1" }}
+                  onClick={() => {
+                    try {
+                      sessionStorage.setItem("sambut_exit_ticket", "true");
+                    } catch {}
+                  }}
+                >
+                  Beranda Acara <ArrowUpRight />
+                </Link>
               </Button>
             ) : savedTicketCode ? (
               <Button asChild className="nav-rsvp" variant="outline">

@@ -182,6 +182,9 @@ export function HomePage() {
 
   useEffect(() => {
     try {
+      if (forceHome) {
+        sessionStorage.setItem("sambut_exit_ticket", "true");
+      }
       const saved = localStorage.getItem("sambut_my_ticket");
       const userExited = sessionStorage.getItem("sambut_exit_ticket") === "true";
       if (saved) {
@@ -1039,6 +1042,7 @@ export function GoldenTicket({
 
 export function TicketPage({ code, customName }: { code: string; customName?: string }) {
   const { data, ready, checkIn } = useSambut();
+  const navigate = useNavigate();
   const ref = useRef<HTMLDivElement>(null);
   const [directItem, setDirectItem] = useState<Invitation | null>(null);
 
@@ -1115,19 +1119,19 @@ export function TicketPage({ code, customName }: { code: string; customName?: st
             <div className="page-width ticket-page-layout">
               {/* ── Top Bar Navigation: Kembali ke Beranda & Daftar Tiket Baru ── */}
               <div className="ticket-top-nav">
-                <button
-                  type="button"
+                <Link
+                  to="/"
+                  search={{ home: "1" }}
                   className="ticket-nav-btn ticket-nav-back"
                   onClick={() => {
                     try {
                       sessionStorage.setItem("sambut_exit_ticket", "true");
                     } catch {}
-                    navigate({ to: "/", search: { home: "1" } });
                   }}
                 >
                   <ArrowLeft size={16} />
                   <span>Kembali ke Beranda Acara</span>
-                </button>
+                </Link>
 
                 <button
                   type="button"
@@ -1312,19 +1316,19 @@ export function TicketPage({ code, customName }: { code: string; customName?: st
               </div>
 
               <div className="text-center ticket-page-footer">
-                <button
-                  type="button"
+                <Link
+                  to="/"
+                  search={{ home: "1" }}
                   className="ticket-footer-back-btn"
                   onClick={() => {
                     try {
                       sessionStorage.setItem("sambut_exit_ticket", "true");
                     } catch {}
-                    navigate({ to: "/", search: { home: "1" } });
                   }}
                 >
                   <ArrowLeft size={14} />
                   <span>Kembali ke halaman acara</span>
-                </button>
+                </Link>
               </div>
             </div>
           </section>
