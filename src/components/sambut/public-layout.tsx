@@ -1,4 +1,4 @@
-import { Link, useRouterState } from "@tanstack/react-router";
+import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
 import { useState, useEffect, type ReactNode } from "react";
 import { ArrowUpRight, Menu, X, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -12,6 +12,7 @@ import {
 } from "@/lib/sambut/store";
 export function PublicLayout({ children }: { children: ReactNode }) {
   const { data, ready } = useSambut();
+  const navigate = useNavigate();
   const [open, setOpen] = useState(false);
   const [savedTicketCode, setSavedTicketCode] = useState<string | null>(null);
 
@@ -48,7 +49,15 @@ export function PublicLayout({ children }: { children: ReactNode }) {
               <Link
                 key={to}
                 to={to}
-                onClick={() => setOpen(false)}
+                search={to === "/" ? { home: "1" } : undefined}
+                onClick={() => {
+                  setOpen(false);
+                  if (to === "/") {
+                    try {
+                      sessionStorage.setItem("sambut_exit_ticket", "true");
+                    } catch {}
+                  }
+                }}
                 className={path === to ? "active" : ""}
               >
                 {label}
@@ -70,9 +79,30 @@ export function PublicLayout({ children }: { children: ReactNode }) {
               <p className="field-note" role="status">
                 Memuat undangan…
               </p>
+            ) : path.startsWith("/ticket") ? (
+              <Button
+                className="nav-rsvp"
+                variant="outline"
+                onClick={() => {
+                  try {
+                    sessionStorage.setItem("sambut_exit_ticket", "true");
+                  } catch {}
+                  navigate({ to: "/", search: { home: "1" } });
+                }}
+              >
+                Beranda Acara <ArrowUpRight />
+              </Button>
             ) : savedTicketCode ? (
               <Button asChild className="nav-rsvp" variant="outline">
-                <Link to="/ticket/$code" params={{ code: savedTicketCode }}>
+                <Link
+                  to="/ticket/$code"
+                  params={{ code: savedTicketCode }}
+                  onClick={() => {
+                    try {
+                      sessionStorage.removeItem("sambut_exit_ticket");
+                    } catch {}
+                  }}
+                >
                   Tiket Saya <ArrowUpRight />
                 </Link>
               </Button>
@@ -112,7 +142,18 @@ export function PublicLayout({ children }: { children: ReactNode }) {
           <nav className="footer-navigation" aria-label="Navigasi footer">
             <strong>Jelajahi</strong>
             {nav.map(([label, to]) => (
-              <Link key={to} to={to}> 
+              <Link
+                key={to}
+                to={to}
+                search={to === "/" ? { home: "1" } : undefined}
+                onClick={() => {
+                  if (to === "/") {
+                    try {
+                      sessionStorage.setItem("sambut_exit_ticket", "true");
+                    } catch {}
+                  }
+                }}
+              > 
                 {label}
               </Link>
             ))}

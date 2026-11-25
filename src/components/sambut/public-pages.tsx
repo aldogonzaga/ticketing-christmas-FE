@@ -25,6 +25,8 @@ import {
   Users,
   Check,
   PartyPopper,
+  ArrowLeft,
+  PlusCircle,
 } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
@@ -181,11 +183,11 @@ export function HomePage() {
   useEffect(() => {
     try {
       const saved = localStorage.getItem("sambut_my_ticket");
+      const userExited = sessionStorage.getItem("sambut_exit_ticket") === "true";
       if (saved) {
         setSavedTicketCode(saved);
-        // Jika user membuka kembali link website tanpa parameter ?home=1 dan tanpa ?undangan=...,
-        // arahkan langsung ke halaman kode tiket unik miliknya
-        if (!forceHome && !invitationCode) {
+        // Jika user membuka kembali link website tanpa parameter ?home=1 dan belum memilih kembali ke beranda:
+        if (!forceHome && !invitationCode && !userExited) {
           navigate({ to: "/ticket/$code", params: { code: saved } });
         }
       }
@@ -1111,6 +1113,41 @@ export function TicketPage({ code, customName }: { code: string; customName?: st
         ) : item ? (
           <section className="ticket-page-section">
             <div className="page-width ticket-page-layout">
+              {/* ── Top Bar Navigation: Kembali ke Beranda & Daftar Tiket Baru ── */}
+              <div className="ticket-top-nav">
+                <button
+                  type="button"
+                  className="ticket-nav-btn ticket-nav-back"
+                  onClick={() => {
+                    try {
+                      sessionStorage.setItem("sambut_exit_ticket", "true");
+                    } catch {}
+                    navigate({ to: "/", search: { home: "1" } });
+                  }}
+                >
+                  <ArrowLeft size={16} />
+                  <span>Kembali ke Beranda Acara</span>
+                </button>
+
+                <button
+                  type="button"
+                  className="ticket-nav-btn ticket-nav-new"
+                  onClick={() => {
+                    if (window.confirm("Ingin mendaftarkan tiket baru untuk rombongan atau keluarga lain?")) {
+                      try {
+                        localStorage.removeItem("sambut_my_ticket");
+                        sessionStorage.removeItem("sambut_exit_ticket");
+                      } catch {}
+                      toast.info("Silakan isi formulir untuk mendaftar tiket baru.");
+                      navigate({ to: "/", search: { home: "1" }, hash: "ambil-tiket" });
+                    }
+                  }}
+                >
+                  <PlusCircle size={16} />
+                  <span>Daftar Tiket Baru</span>
+                </button>
+              </div>
+
               <header className="ticket-page-heading">
                 <div>
                   <SectionLabel>TIKET DIGITAL · {item.category.toUpperCase()}</SectionLabel>
@@ -1275,7 +1312,19 @@ export function TicketPage({ code, customName }: { code: string; customName?: st
               </div>
 
               <div className="text-center ticket-page-footer">
-                <ArrowLink to="/" search={{ home: "1" }}>Kembali ke halaman acara</ArrowLink>
+                <button
+                  type="button"
+                  className="ticket-footer-back-btn"
+                  onClick={() => {
+                    try {
+                      sessionStorage.setItem("sambut_exit_ticket", "true");
+                    } catch {}
+                    navigate({ to: "/", search: { home: "1" } });
+                  }}
+                >
+                  <ArrowLeft size={14} />
+                  <span>Kembali ke halaman acara</span>
+                </button>
               </div>
             </div>
           </section>

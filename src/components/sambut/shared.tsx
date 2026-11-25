@@ -6,7 +6,16 @@ import { toast } from "sonner";
 import * as DialogPrimitive from "@radix-ui/react-dialog";
 export function Brand({ compact = false }: { compact?: boolean }) {
   return (
-    <Link to="/" className="brand">
+    <Link
+      to="/"
+      search={{ home: "1" }}
+      className="brand"
+      onClick={() => {
+        try {
+          sessionStorage.setItem("sambut_exit_ticket", "true");
+        } catch {}
+      }}
+    >
       <span className="brand-mark">
         <Sparkles strokeWidth={1.4} />
       </span>

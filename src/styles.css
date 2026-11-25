@@ -1747,6 +1747,65 @@ img {
 .ticket-page-layout {
   max-width: 980px;
 }
+/* ── Ticket Top Navigation Bar ── */
+.ticket-top-nav {
+  max-width: 700px;
+  margin: 0 auto 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.ticket-nav-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 18px;
+  font-size: 13px;
+  font-weight: 500;
+  border-radius: 9999px;
+  border: 1px solid var(--border);
+  background: var(--card);
+  color: var(--foreground);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 8px color-mix(in oklch, var(--foreground) 4%, transparent);
+}
+.ticket-nav-btn:hover {
+  background: var(--muted);
+  border-color: color-mix(in oklch, var(--foreground) 25%, transparent);
+  transform: translateY(-1px);
+}
+.ticket-nav-back {
+  color: var(--foreground);
+}
+.ticket-nav-new {
+  color: #15803d;
+  border-color: rgba(22, 163, 74, 0.35);
+  background: #f0fdf4;
+}
+.ticket-nav-new:hover {
+  background: #dcfce7;
+  border-color: #16a34a;
+}
+.ticket-footer-back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--muted-foreground);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition: color 0.15s ease;
+}
+.ticket-footer-back-btn:hover {
+  color: var(--foreground);
+  text-decoration: underline;
+}
+
 .ticket-page-heading {
   max-width: 700px;
   margin: 0 auto;
@@ -3521,7 +3580,19 @@ img {
     min-height: calc(100svh - 75px);
     padding: 36px 0 48px;
   }
-  .ticket-page-heading {
+  .ticket-top-nav {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+  .ticket-nav-btn {
+    justify-content: center;
+    padding: 10px 14px;
+    font-size: 12px;
+  }
+
+.ticket-page-heading {
     align-items: flex-start;
     flex-direction: column;
     gap: 14px;
@@ -3941,6 +4012,7 @@ img {
     background: transparent;
     border: 0;
   }
+  .ticket-top-nav,
   .ticket-page-heading,
   .ticket-checkin-panel,
   .ticket-page-footer {
